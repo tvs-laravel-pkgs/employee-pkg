@@ -134,6 +134,22 @@
                                                 <input type="password" class="form-control" ng-model="$ctrl.employee.user.password" name="user[password]" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
+                                        <div class="col-md-6">
+                                            <div class="profile-upload">
+                                                <!-- <img class="img-responsive" src="{{ URL::asset('public/theme/img/content/profile.jpg') }}" alt="Profile Upload" /> -->
+                                                <div class="avatar-upload">
+                                                    <div class="avatar-edit">
+                                                        <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" />
+                                                        <label for="imageUpload"><i class="ion-md-create"></i></label>
+                                                    </div>
+                                                    <div class="avatar-preview">
+                                                        <div class="avatar-img" id="imagePreview">
+                                                        </div>
+                                                    </div>
+                                                </div><!-- Avatar Upload -->
+                                                <p class="img-caption">UPLOAD PICTURE</p>
+                                            </div><!-- Profile Upload -->
+                                        </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
