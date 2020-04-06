@@ -20,11 +20,31 @@
 	    when('/employee-pkg/employee/edit/:id', {
 	        template: '<employee-form></employee-form>',
 	        title: 'Edit Employee',
+	    }).
+
+	    //DESIGNATION
+	    when('/employee-pkg/designation/list', {
+	        template: '<designation-list></designation-list>',
+	        title: 'Designations',
+	    }).
+	    when('/employee-pkg/designation/add', {
+	        template: '<designation-form></designation-form>',
+	        title: 'Add Designation',
+	    }).
+	    when('/employee-pkg/designation/edit/:id', {
+	        template: '<designation-form></designation-form>',
+	        title: 'Edit Designation',
 	    });
+
 	}]);
 
 	//EMPLOYEES
     var employee_list_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/employee/list.html')}}";
     var employee_form_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/employee/form.html')}}";
+
+	//DESIGNATION
+    var designation_list_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/designation/list.html')}}";
+    var employee_form_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/designation/form.html')}}";
 </script>
 <script type="text/javascript" src="{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/employee/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/designation/controller.js')}}"></script>
