@@ -153,7 +153,7 @@ class EmployeeController extends Controller {
 					'unique:employees,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'personal_email' => [
-					'required:nullable',
+					'nullable',
 					'min:3',
 					'max:64',
 					'unique:employees,personal_email,' . $request->id . ',id,company_id,' . Auth::user()->company_id,

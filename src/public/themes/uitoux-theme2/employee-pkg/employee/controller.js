@@ -263,6 +263,11 @@ app.component('employeeForm', {
                     minlength: 3,
                     maxlength: 255,
                 },
+                'user[username]': {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 32,
+                },
                 'alternate_mobile_number': {
                     number: true,
                     maxlength: 12,
