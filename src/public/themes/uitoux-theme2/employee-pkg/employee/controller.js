@@ -259,6 +259,7 @@ app.component('employeeForm', {
                     maxlength: 64,
                 },
                 'user[last_name]': {
+                    required: true,
                     minlength: 3,
                     maxlength: 255,
                 },
