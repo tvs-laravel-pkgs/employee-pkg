@@ -212,8 +212,13 @@ app.component('employeeForm', {
                 } else {
                     self.switch_password = 'Yes';
                 }
-                self.employee_attachment_name = response.data.employee_attachment.name;
-                console.log(self.employee_attachment_name);
+                // console.log(response.data.employee_attachment);
+                // if (response.data.employee_attachment.name != '' && response.data.employee_attachment.name != 'null') {
+                //     self.employee_attachment_name = response.data.employee_attachment.name;
+                // } else {
+                //     self.employee_attachment_name = '';
+                // }
+                console.log(response.data.employee);
 
             } else {
                 self.switch_value = 'Active';

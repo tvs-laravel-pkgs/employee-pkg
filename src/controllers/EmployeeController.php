@@ -10,6 +10,7 @@ use App\User;
 use Auth;
 use Carbon\Carbon;
 use DB;
+use File;
 use Entrust;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -110,12 +111,12 @@ class EmployeeController extends Controller {
 			$action = 'Add';
 			$employee->password_change = 'Yes';
 		} else {
-			$employee = Employee::withTrashed()->with('user')->find($id);
+			$employee = Employee::withTrashed()->with('user','employeeAttachment')->find($id);
 			$action = 'Edit';
 			$employee->password_change = 'No';
 			$this->data['employee_attachment']=Attachment::select('name')
-			->where('attachment_of_id',101)
-			->where('attachment_type_id',121)
+			->where('attachment_of_id',120)//ATTACHMENT OF EMPLOYEE
+			->where('attachment_type_id',140)//ATTACHMENT TYPE OF EMPLOYEE
 			->where('entity_id',$employee->id)
 			->first();
 		}
@@ -251,20 +252,38 @@ class EmployeeController extends Controller {
 			$user->save();
 
 			//Employee Profile Attachment
-			$employee_images_des = storage_path('employee/attachments/');
-						Storage::makeDirectory($employee_images_des, 0777);
+			$employee_images_des = storage_path('app/public/employee/attachments/');
+			//dump($employee_images_des);
+			Storage::makeDirectory($employee_images_des, 0777);
 			if (!empty($request['attachment'])) {
-				$exists_path=storage_path('app/public/employee/attachments/'. $employee->id);
+				if(!File::exists($employee_images_des)) {
+					File::makeDirectory($employee_images_des, 0777, true);
+				}
+				$remove_previous_attachment = Attachment::where([
+					'entity_id' => $employee->id,
+					'attachment_of_id' => 120,
+					'attachment_type_id' => 140,
+				])->first();
+				if (!empty($remove_previous_attachment)) {
+					$img_path = $employee_images_des.$remove_previous_attachment->name;
+					if (File::exists($img_path)) {
+						File::delete($img_path);
+					}
+					$remove = $remove_previous_attachment->forceDelete();
+				}
+
+				/*$exists_path=storage_path('app/public/employee/attachments/'.$employee->id.'/');
+				//dd($exists_path);
 				if (is_dir($exists_path))
 				{
 					unlink($exists_path);
-				}
+				}*/
 				$extension = $request['attachment']->getClientOriginalExtension();
 				$request['attachment']->move(storage_path('app/public/employee/attachments/'), $employee->id .'.'.$extension);
 				$employee_attachement = new Attachment;
 				$employee_attachement->company_id = Auth::user()->company_id;
-				$employee_attachement->attachment_of_id = 101; //ATTACHMENT OF EMPLOYEE
-				$employee_attachement->attachment_type_id = 121; //ATTACHMENT TYPE  EMPLOYEE
+				$employee_attachement->attachment_of_id = 120; //ATTACHMENT OF EMPLOYEE
+				$employee_attachement->attachment_type_id = 140; //ATTACHMENT TYPE  EMPLOYEE
 				$employee_attachement->entity_id = $employee->id;
 				$employee_attachement->name = $employee->id .'.'.$extension;
 				$employee_attachement->save();

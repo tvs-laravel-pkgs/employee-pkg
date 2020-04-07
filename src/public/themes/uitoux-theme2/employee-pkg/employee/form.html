@@ -127,7 +127,7 @@
                                             <div class="form-group">
                                                 <label>Change Password <sup class="mandatory">*</sup></label>
                                                 <div class="tab-switch">
-                                                    <md-switch ng-model="$ctrl.switch_password" aria-label="Switch 2" ng-change="psw_change($ctrl.switch_password)" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn">
+                                                    <md-switch ng-model="$ctrl.switch_password" aria-label="Switch 2" ng-change="psw_change($ctrl.switch_password)" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
                                                         {{ $ctrl.switch_password }}
                                                     </md-switch>
                                                     <input type="hidden" id="password_change" name="password_change" value="{{$ctrl.switch_password}}" class="required">
@@ -151,8 +151,8 @@
                                                         <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" name="attachment" />
                                                         <label for="imageUpload"><i class="ion-md-create"></i></label>
                                                     </div>
-                                                    <div class="avatar-preview" ng-if="$ctrl.employee_attachment_name !=''">
-                                                        <div class="avatar-img" id="imagePreview" style="background-image: url(' {{$ctrl.employee_attchment_url}}/{{$ctrl.employee_attachment_name}}');">
+                                                    <div class="avatar-preview">
+                                                        <div class="avatar-img" id="imagePreview" style="background-image: url(' {{$ctrl.employee_attchment_url}}/{{$ctrl.employee.employee_attachment.name}}');">
                                                         </div>
                                                     </div>
                                                 </div><!-- Avatar Upload -->

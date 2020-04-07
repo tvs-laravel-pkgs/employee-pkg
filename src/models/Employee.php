@@ -5,6 +5,7 @@ namespace Abs\EmployeePkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
+use Abs\BasicPkg\Attachment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -27,6 +28,9 @@ class Employee extends Model {
 
 	public function user() {
 		return $this->hasOne('App\User', 'entity_id')->where('users.user_type_id', 1);
+	}
+	public function employeeAttachment() {
+		return $this->hasOne('Abs\BasicPkg\Attachment', 'entity_id')->where('attachment_of_id', 120)->where('attachment_type_id', 140);
 	}
 
 	public static function createFromObject($record_data) {
