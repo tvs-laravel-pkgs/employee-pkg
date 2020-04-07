@@ -26,5 +26,6 @@
 	//EMPLOYEES
     var employee_list_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/employee/list.html')}}";
     var employee_form_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/employee/form.html')}}";
+    var employee_attchment_url = "{{asset('/storage/app/public/employee/attachments')}}";
 </script>
 <script type="text/javascript" src="{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/employee/controller.js')}}"></script>

@@ -9,6 +9,13 @@ app.component('employeeList', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+        $http.get(
+            laravel_routes['getEmployeeFilterData']
+        ).then(function(response) {
+            // console.log(response.data);
+            self.designation_list = response.data.designation_list;
+            $rootScope.loading = false;
+        });
         self.add_permission = self.hasPermission('add-employee');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
@@ -45,7 +52,12 @@ app.component('employeeList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.name = $('#employee_name').val();
+                    d.code = $('#employee_code').val();
+                    d.first_name = $('#first_name').val();
+                    d.last_name = $('#last_name').val();
+                    d.user_name = $('#user_name').val();
+                    d.mobile_number = $('#mobile_number').val();
+                    d.designation_id = $('#designation_id').val();
                     d.status = $('#status').val();
                 },
             },
@@ -124,15 +136,37 @@ app.component('employeeList', {
             }
         });
 
-        $('#employee_name').on('keyup', function() {
+        $('#employee_code').on('keyup', function() {
             dataTables.fnFilter();
         });
+        $('#first_name').on('keyup', function() {
+            dataTables.fnFilter();
+        });
+        $('#last_name').on('keyup', function() {
+            dataTables.fnFilter();
+        });
+        $('#user_name').on('keyup', function() {
+            dataTables.fnFilter();
+        });
+        $('#mobile_number').on('keyup', function() {
+            dataTables.fnFilter();
+        });
+        $scope.onselectDesignation = function(id) {
+            $('#designation_id').val(id);
+            dataTables.fnFilter();
+        }
+
         $scope.onSelectedStatus = function(val) {
             $("#status").val(val);
             dataTables.fnFilter();
         }
         $scope.reset_filter = function() {
-            $("#employee_name").val('');
+            $("#employee_code").val('');
+            $("#first_name").val('');
+            $("#last_name").val('');
+            $("#user_name").val('');
+            $("#mobile_number").val('');
+            $("#designation_id").val('');
             $("#status").val('');
             dataTables.fnFilter();
         }
@@ -161,6 +195,8 @@ app.component('employeeForm', {
         ).then(function(response) {
             // console.log(response);
             self.employee = response.data.employee;
+            self.designation_list = response.data.designation_list;
+            self.employee_attchment_url = employee_attchment_url;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
@@ -169,10 +205,37 @@ app.component('employeeForm', {
                 } else {
                     self.switch_value = 'Active';
                 }
+                if (self.employee.password_change == 'No') {
+                    self.switch_password = 'No';
+                    $("#hide_password").hide();
+                    $("#password").prop('disabled', true);
+                } else {
+                    self.switch_password = 'Yes';
+                }
+                self.employee_attachment_name = response.data.employee_attachment.name;
+                console.log(self.employee_attachment_name);
+
             } else {
                 self.switch_value = 'Active';
+                $("#hide_password").show();
+                $("#password").prop('disabled', false);
+                self.switch_password = 'Yes';
+                self.employee_attachment_name = '';
             }
         });
+
+        $scope.psw_change = function(val) {
+            if (val == 'No') {
+                $("#hide_password").hide();
+                $("#password").prop('disabled', true);
+            } else {
+                $("#hide_password").show();
+                setTimeout(function() {
+                    $noty.close();
+                }, 1000);
+                $("#password").prop('disabled', false);
+            }
+        }
 
         $("input:text:visible:first").focus();
 
@@ -185,14 +248,34 @@ app.component('employeeForm', {
                     minlength: 3,
                     maxlength: 64,
                 },
-                'first_name': {
+                'user[first_name]': {
                     required: true,
                     minlength: 3,
                     maxlength: 64,
                 },
-                'last_name': {
+                'user[last_name]': {
                     minlength: 3,
                     maxlength: 255,
+                },
+                'alternate_mobile_number': {
+                    number: true,
+                    maxlength: 12,
+                },
+
+                'user[mobile_number]': {
+                    number: true,
+                    maxlength: 12,
+                },
+                'user[password]': {
+                    required: function(element) {
+                        if ($("#password_change").val() == 'Yes') {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    },
+                    minlength: 5,
+                    maxlength: 16,
                 },
             },
             submitHandler: function(form) {

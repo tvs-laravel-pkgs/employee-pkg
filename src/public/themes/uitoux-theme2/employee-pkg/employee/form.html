@@ -23,7 +23,7 @@
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
-        <form id="form" autocomplete="off">
+        <form id="form" autocomplete="off" enctype="multipart/form-data">
             <input type="hidden" name="id" value="{{$ctrl.employee.id}}">
             <div class="page-tab-form pb-70">
                 <div class="tab-form-wrap">
@@ -60,18 +60,16 @@
                                             <div class="input-text form-group">
                                                 <label>
                                                     First Name
-                                                    <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.employee.user.first_name" name="user[first_name]" placeholder="Enter First Name" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.employee.user.first_name" name="user[first_name]" placeholder="Enter First Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Last Name
-                                                    <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.employee.user.last_name" name="user[last_name]" placeholder="Enter Last Name" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.employee.user.last_name" name="user[last_name]" placeholder="Enter Last Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -126,12 +124,23 @@
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Change Password <sup class="mandatory">*</sup></label>
+                                                <div class="tab-switch">
+                                                    <md-switch ng-model="$ctrl.switch_password" aria-label="Switch 2" ng-change="psw_change($ctrl.switch_password)" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn">
+                                                        {{ $ctrl.switch_password }}
+                                                    </md-switch>
+                                                    <input type="hidden" id="password_change" name="password_change" value="{{$ctrl.switch_password}}" class="required">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3" id="hide_password">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Password
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="password" class="form-control" ng-model="$ctrl.employee.user.password" name="user[password]" />
+                                                <input type="password" class="form-control" ng-model="$ctrl.employee.user.password" name="user[password]" id="password" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-6">
@@ -139,11 +148,11 @@
                                                 <!-- <img class="img-responsive" src="{{ URL::asset('public/theme/img/content/profile.jpg') }}" alt="Profile Upload" /> -->
                                                 <div class="avatar-upload">
                                                     <div class="avatar-edit">
-                                                        <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" />
+                                                        <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" name="attachment" />
                                                         <label for="imageUpload"><i class="ion-md-create"></i></label>
                                                     </div>
-                                                    <div class="avatar-preview">
-                                                        <div class="avatar-img" id="imagePreview">
+                                                    <div class="avatar-preview" ng-if="$ctrl.employee_attachment_name !=''">
+                                                        <div class="avatar-img" id="imagePreview" style="background-image: url(' {{$ctrl.employee_attchment_url}}/{{$ctrl.employee_attachment_name}}');">
                                                         </div>
                                                     </div>
                                                 </div><!-- Avatar Upload -->
@@ -164,6 +173,20 @@
                                                 </div>
                                             </div><!-- Form Group -->
                                         </div><!-- Column -->
+                                        <div class="col-sm-3">
+                                            <div class="separate-form-group">
+                                                <label>Designation</label>
+                                                <ui-select ng-model="$ctrl.employee.designation_id" theme="select2">
+                                                    <ui-select-match placeholder="Select Designation">
+                                                        {{$select.selected.name || $select.selected}}
+                                                    </ui-select-match>
+                                                    <ui-select-choices repeat="i.id as i in $ctrl.designation_list | propsFilter: {name: $select.search}">
+                                                        <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                                <input type="hidden" name="designation_id" value="{{$ctrl.employee.designation_id}}" class="">
+                                            </div><!-- Field -->
+                                        </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">

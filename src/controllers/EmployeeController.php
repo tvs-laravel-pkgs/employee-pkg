@@ -2,6 +2,8 @@
 
 namespace Abs\EmployeePkg;
 use Abs\EmployeePkg\Employee;
+use Abs\EmployeePkg\Designation;
+use Abs\BasicPkg\Attachment;
 use App\ActivityLog;
 use App\Http\Controllers\Controller;
 use App\User;
@@ -10,6 +12,7 @@ use Carbon\Carbon;
 use DB;
 use Entrust;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Validator;
 use Yajra\Datatables\Datatables;
 
@@ -40,8 +43,33 @@ class EmployeeController extends Controller {
 			->where('u.user_type_id', 1)
 
 			->where(function ($query) use ($request) {
-				if (!empty($request->name)) {
-					$query->where('employees.name', 'LIKE', '%' . $request->name . '%');
+				if (!empty($request->code)) {
+					$query->where('employees.code', 'LIKE', '%' . $request->code . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->first_name)) {
+					$query->where('u.first_name', 'LIKE', '%' . $request->first_name . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->last_name)) {
+					$query->where('u.last_name', 'LIKE', '%' . $request->last_name . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->mobile_number)) {
+					$query->where('u.mobile_number', 'LIKE', '%' . $request->mobile_number . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->user_name)) {
+					$query->where('u.username', 'LIKE', '%' . $request->user_name . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->designation_id)) {
+					$query->where('employees.designation_id',$request->designation_id);
 				}
 			})
 			->where(function ($query) use ($request) {
@@ -80,25 +108,41 @@ class EmployeeController extends Controller {
 		if (!$id) {
 			$employee = new Employee;
 			$action = 'Add';
+			$employee->password_change = 'Yes';
 		} else {
-			$employee = Employee::withTrashed()->find($id);
+			$employee = Employee::withTrashed()->with('user')->find($id);
 			$action = 'Edit';
+			$employee->password_change = 'No';
+			$this->data['employee_attachment']=Attachment::select('name')
+			->where('attachment_of_id',101)
+			->where('attachment_type_id',121)
+			->where('entity_id',$employee->id)
+			->first();
 		}
 		$this->data['success'] = true;
 		$this->data['employee'] = $employee;
+		$this->data['designation_list'] =collect(Designation::select('name', 'id')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Designation']);
 		$this->data['action'] = $action;
+		return response()->json($this->data);
+	}
+	public function getEmployeeFilterData() {
+		$this->data['designation_list'] =collect(Designation::select('name', 'id')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Designation']);
+		$this->data['success'] = true;
 		return response()->json($this->data);
 	}
 
 	public function saveEmployee(Request $request) {
-		// dd($request->all());
+		 //dd($request->all());
 		try {
 			$error_messages = [
-				'code.required' => 'Name is Required',
-				'code.unique' => 'Name is already taken',
-				'code.min' => 'Name is Minimum 3 Charachers',
-				'code.max' => 'Name is Maximum 64 Charachers',
+				'code.required' => 'Code is Required',
+				'code.unique' => 'Code is already taken',
+				'code.min' => 'Code is Minimum 3 Charachers',
+				'code.max' => 'Code is Maximum 64 Charachers',
 				'first_name.max' => 'Description is Maximum 255 Charachers',
+				'personal_email.unique' => 'Personal Email is already taken',
+				'alternate_mobile_number.max' => 'Alternate Mobile Number is Maximum 10 Charachers',
+				'github_username.max' => 'Github Username is Maximum 64 Charachers',
 			];
 			$validator = Validator::make($request->all(), [
 				'code' => [
@@ -107,10 +151,70 @@ class EmployeeController extends Controller {
 					'max:64',
 					'unique:employees,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
-				'first_name' => 'nullable|max:255',
+				'personal_email' => [
+					'required:nullable',
+					'min:3',
+					'max:64',
+					'unique:employees,personal_email,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+				],
+				'alternate_mobile_number' => 'nullable|max:10',
+				'github_username' => 'nullable|max:64',
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
+			}
+			$user_error_messages = [
+				'first_name.required' => 'First Name is Required',
+				'first_name.min' => 'First Name is Minimum 3 Charachers',
+				'first_name.max' => 'First Name is Maximum 32 Charachers',
+				'last_name.required' => 'Last Name is Required',
+				'last_name.min' => 'Last Name is Minimum 3 Charachers',
+				'last_name.max' => 'Last Name is Maximum 32 Charachers',
+				'email.required' => 'Email is Required',
+				'email.min' => 'Email is Minimum 3 Charachers',
+				'email.max' => 'Email is Maximum 191 Charachers',
+				'email.unique' => 'Official Email is already taken',
+				'mobile_number.required' => 'Mobile Number is Required',
+				'mobile_number.min' => 'Mobile Number is Minimum 10 Charachers',
+				'mobile_number.max' => 'Mobile Number is Maximum 10 Charachers',
+				'mobile_number.unique' => 'Mobile Number is already taken',
+				'username.required' => 'Username Number is Required',
+				'username.min' => 'Username is Minimum 3 Charachers',
+				'username.max' => 'Username is Maximum 32 Charachers',
+				'username.unique' => 'Username is already taken',
+			];
+			$user_validator = Validator::make($request->user, [
+				'first_name' => [
+					'required:true',
+					'min:3',
+					'max:32',
+				],
+				'last_name' => [
+					'required:true',
+					'min:3',
+					'max:32',
+				],
+				'email' => [
+					'required:true',
+					'min:3',
+					'max:191',
+					'unique:users,email,' . $request->id . ',entity_id',
+				],
+				'mobile_number' => [
+					'required:true',
+					'min:10',
+					'max:10',
+					'unique:users,mobile_number,' . $request->id . ',entity_id',
+				],
+				'username' => [
+					'required:true',
+					'min:3',
+					'max:32',
+					'unique:users,username,' . $request->id . ',entity_id',
+				],	
+			], $user_error_messages);
+			if ($user_validator->fails()) {
+				return response()->json(['success' => false, 'errors' => $user_validator->errors()->all()]);
 			}
 
 			DB::beginTransaction();
@@ -125,7 +229,8 @@ class EmployeeController extends Controller {
 				$user = User::withTrashed()->where([
 					'entity_id' => $request->id,
 					'user_type_id' => 1,
-				]);
+				])
+				->first();
 				$user->updated_by_id = Auth::user()->id;
 			}
 			$employee->fill($request->all());
@@ -137,12 +242,37 @@ class EmployeeController extends Controller {
 				$employee->deleted_at = NULL;
 			}
 			$employee->save();
+			//dd($employee);
 
 			$user->fill($request->user);
 			$user->has_mobile_login = 0;
 			$user->entity_id = $employee->id;
 			$user->user_type_id = 1;
 			$user->save();
+
+			//Employee Profile Attachment
+			$employee_images_des = storage_path('employee/attachments/');
+						Storage::makeDirectory($employee_images_des, 0777);
+			if (!empty($request['attachment'])) {
+				$exists_path=storage_path('app/public/employee/attachments/'. $employee->id);
+				if (is_dir($exists_path))
+				{
+					unlink($exists_path);
+				}
+				$extension = $request['attachment']->getClientOriginalExtension();
+				$request['attachment']->move(storage_path('app/public/employee/attachments/'), $employee->id .'.'.$extension);
+				$employee_attachement = new Attachment;
+				$employee_attachement->company_id = Auth::user()->company_id;
+				$employee_attachement->attachment_of_id = 101; //ATTACHMENT OF EMPLOYEE
+				$employee_attachement->attachment_type_id = 121; //ATTACHMENT TYPE  EMPLOYEE
+				$employee_attachement->entity_id = $employee->id;
+				$employee_attachement->name = $employee->id .'.'.$extension;
+				$employee_attachement->save();
+				$user->profile_image_id=$employee_attachement->id;
+				$user->save();
+
+			}
+
 
 			// $activity = new ActivityLog;
 			// $activity->date_time = Carbon::now();
@@ -179,10 +309,15 @@ class EmployeeController extends Controller {
 	public function deleteEmployee(Request $request) {
 		DB::beginTransaction();
 		try {
-			$employee = Employee::withTrashed()->where('id', $request->id)->forceDelete();
+			$employee = Employee::withTrashed()->where('id', $request->id)->first();
 			if ($employee) {
-
-				$activity = new ActivityLog;
+				$user = User::withTrashed()->where([
+					'entity_id' => $request->id,
+					'user_type_id' => 1,
+				])
+				->forceDelete();
+				$employee = Employee::withTrashed()->where('id', $request->id)->forceDelete();
+				/*$activity = new ActivityLog;
 				$activity->date_time = Carbon::now();
 				$activity->user_id = Auth::user()->id;
 				$activity->module = 'Employees';
@@ -191,7 +326,7 @@ class EmployeeController extends Controller {
 				$activity->activity_id = 282;
 				$activity->activity = 282;
 				$activity->details = json_encode($activity);
-				$activity->save();
+				$activity->save();*/
 
 				DB::commit();
 				return response()->json(['success' => true, 'message' => 'Employee Deleted Successfully']);

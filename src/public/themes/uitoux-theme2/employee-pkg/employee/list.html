@@ -72,12 +72,50 @@
             <div class="modal-body">
                 <div class="modal-form">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <div class="form-group">
-                                <label>Employee Name</label>
-                                <input type="text" class="form-control" id="employee_name" name="employee_name" placeholder="Enter Employee Name" autocomplete="off">
+                                <label>Employee Code</label>
+                                <input type="text" class="form-control" id="employee_code" name="employee_code" placeholder="Enter Employee Code" autocomplete="off">
                             </div><!-- Field -->
                         </div><!-- Column -->
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter First Name" autocomplete="off">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter Last Name" autocomplete="off">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>User Name</label>
+                                <input type="text" class="form-control" id="user_name" name="user_name" placeholder="Enter User Name" autocomplete="off">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Mobile Number</label>
+                                <input type="text" class="form-control" id="mobile_number" name="mobile_number" placeholder="Enter Mobile Number" autocomplete="off">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-sm-3">
+                            <div class="separate-form-group">
+                                <label>Designation</label>
+                                <ui-select ng-model="$ctrl.designation_id" theme="select2" ng-change="onselectDesignation($ctrl.designation_id)">
+                                    <ui-select-match placeholder="Select Designation">
+                                        {{$select.selected.name || $select.selected}}
+                                    </ui-select-match>
+                                    <ui-select-choices repeat="i.id as i in $ctrl.designation_list | propsFilter: {name: $select.search}">
+                                        <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                    </ui-select-choices>
+                                </ui-select>
+                                <input type="hidden" name="designation_id" id="designation_id" value="" class="">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="input-text form-group">
                                 <label>Status</label>
@@ -93,7 +131,7 @@
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
-                            <button type="button" class="btn btn-rose my-tooltip" ng-click="reset_filter();$ctrl.employee.status=''" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
+                            <button type="button" class="btn btn-rose my-tooltip" ng-click="reset_filter();$ctrl.employee.status='',$ctrl.designation_id=''" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
                         </div>
                     </div><!-- Row -->
                 </div><!-- Modal Form -->

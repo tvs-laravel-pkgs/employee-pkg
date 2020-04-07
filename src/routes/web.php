@@ -7,5 +7,6 @@ Route::group(['namespace' => 'Abs\EmployeePkg', 'middleware' => ['web', 'auth'],
 	Route::get('/employee/get-form-data', 'EmployeeController@getEmployeeFormData')->name('getEmployeeFormData');
 	Route::post('/employee/save', 'EmployeeController@saveEmployee')->name('saveEmployee');
 	Route::get('/employee/delete', 'EmployeeController@deleteEmployee')->name('deleteEmployee');
+	Route::get('/employee/get-filter-data', 'EmployeeController@getEmployeeFilterData')->name('getEmployeeFilterData');
 
 });
