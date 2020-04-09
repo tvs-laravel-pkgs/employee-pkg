@@ -38,6 +38,32 @@ class EmployeePkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
+			//Designations
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'designations',
+				'display_name' => 'Designations',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'designations',
+				'name' => 'add-designation',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'designations',
+				'name' => 'edit-designation',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'designations',
+				'name' => 'delete-designation',
+				'display_name' => 'Delete',
+			],
+
 		];
 		Permission::createFromArrays($permissions);
 	}
