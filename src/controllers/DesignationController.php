@@ -21,23 +21,15 @@ class DesignationController extends Controller {
 
 	public function getDesignationList(Request $request) {
 		$designations = Designation::withTrashed()
-			->join('users as u', 'u.entity_id', 'designations.id')
-			->leftJoin('designations as d', 'd.id', 'designations.designation_id')
+			
 			->select([
 				'designations.id',
-				'designations.code',
-				'u.first_name',
-				'u.last_name',
-				'u.last_name',
-				'u.email',
-				'u.mobile_number',
-				'd.name as designation_name',
-				'u.username',
-				// DB::raw('COALESCE(designations.description,"--") as description'),
+				'designations.name',
+				'designations.short_name',
+				
 				DB::raw('IF(designations.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->where('designations.company_id', Auth::user()->company_id)
-			->where('u.user_type_id', 1)
 
 			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
@@ -54,9 +46,10 @@ class DesignationController extends Controller {
 		;
 
 		return Datatables::of($designations)
-			->addColumn('code', function ($designation) {
+			->rawColumns(['name','action'])
+			->addColumn('name', function ($designation) {
 				$status = $designation->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $designation->code;
+				return '<span class="status-indicator ' . $status . '"></span>' . $designation->name;
 			})
 			->addColumn('action', function ($designation) {
 				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');

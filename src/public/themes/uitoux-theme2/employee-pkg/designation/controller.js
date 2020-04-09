@@ -5,10 +5,10 @@ app.component('designationList', {
         var self = this;
         $('#search_designation').focus();
         self.hasPermission = HelperService.hasPermission;
-        // if (!self.hasPermission('designations')) {
-        //     window.location = "#!/page-permission-denied";
-        //     return false;
-        // }
+        if (!self.hasPermission('designations')) {
+            window.location = "#!/page-permission-denied";
+            return false;
+        }
         self.add_permission = self.hasPermission('add-designation');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
@@ -51,14 +51,9 @@ app.component('designationList', {
             },
 
             columns: [
-                { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'designations.code' },
-                { data: 'first_name', name: 'u.first_name' },
-                { data: 'last_name', name: 'u.last_name' },
-                { data: 'email', name: 'u.email' },
-                { data: 'mobile_number', name: 'u.mobile_number' },
-                { data: 'designation_name', name: 'd.name' },
-                { data: 'username', name: 'u.username' },
+                { data: 'action', class: 'action', searchable: false },
+                { data: 'name', name: 'designations.name' },
+                { data: 'short_name', name: 'designations.short_name' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_info').html(total)
