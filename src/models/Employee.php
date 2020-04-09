@@ -5,7 +5,6 @@ namespace Abs\EmployeePkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
-use Abs\BasicPkg\Attachment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -21,10 +20,6 @@ class Employee extends Model {
 		'personal_email',
 		'alternate_mobile_number',
 	];
-
-	public function tasks() {
-		return $this->hasManyThrough('Abs\ProjectPkg\Task', 'App\User', 'entity_id', 'assigned_to_id')->where('users.user_type_id', 1);
-	}
 
 	public function user() {
 		return $this->hasOne('App\User', 'entity_id')->where('users.user_type_id', 1);
