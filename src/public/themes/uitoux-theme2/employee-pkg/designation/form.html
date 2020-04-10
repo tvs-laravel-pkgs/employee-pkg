@@ -50,105 +50,20 @@
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Designation Code
+                                                    Short Name
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.designation.code" name="code" placeholder="Enter Designation Code" />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.designation.short_name" name="short_name" placeholder="Enter Short Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    First Name
+                                                    Name
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.designation.user.first_name" name="user[first_name]" placeholder="Enter First Name" />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.designation.name" name="name" placeholder="Enter Name" />
                                             </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Last Name
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.designation.user.last_name" name="user[last_name]" placeholder="Enter Last Name" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Official Email
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="email" class="form-control required" ng-model="$ctrl.designation.user.email" name="user[email]" placeholder="Enter Official Email ID" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Mobile Number
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.designation.user.mobile_number" name="user[mobile_number]" placeholder="Enter Mobile Number" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Personal Email
-                                                </label>
-                                                <input type="email" class="form-control" ng-model="$ctrl.designation.personal_email" name="personal_email" placeholder="Enter Personal Email" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Alternate Mobile Number
-                                                </label>
-                                                <input type="text" class="form-control" ng-model="$ctrl.designation.alternate_mobile_number" name="alternate_mobile_number" placeholder="Enter Alternate Mobile Number" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    GitHub Username
-                                                </label>
-                                                <input type="text" class="form-control" ng-model="$ctrl.designation.github_username" name="github_username" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Username
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="text" class="form-control" ng-model="$ctrl.designation.user.username" name="user[username]" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Password
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="password" class="form-control" ng-model="$ctrl.designation.user.password" name="user[password]" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-6">
-                                            <div class="profile-upload">
-                                                <!-- <img class="img-responsive" src="{{ URL::asset('public/theme/img/content/profile.jpg') }}" alt="Profile Upload" /> -->
-                                                <div class="avatar-upload">
-                                                    <div class="avatar-edit">
-                                                        <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" />
-                                                        <label for="imageUpload"><i class="ion-md-create"></i></label>
-                                                    </div>
-                                                    <div class="avatar-preview">
-                                                        <div class="avatar-img" id="imagePreview">
-                                                        </div>
-                                                    </div>
-                                                </div><!-- Avatar Upload -->
-                                                <p class="img-caption">UPLOAD PICTURE</p>
-                                            </div><!-- Profile Upload -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
@@ -167,7 +82,6 @@
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <a class="btn btn-cancel my-tooltip" href="#!/employee-pkg/designation/list" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left">Cancel</a>
                                                     <button type="submit" id="submit" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">
                                                         Submit
                                                     </button>

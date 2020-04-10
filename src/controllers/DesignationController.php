@@ -58,7 +58,7 @@ class DesignationController extends Controller {
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
 				if (Entrust::can('edit-designation')) {
-					$output .= '<a href="#!/designation-pkg/designation/edit/' . $designation->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+					$output .= '<a href="#!/employee-pkg/designation/edit/' . $designation->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
 				if (Entrust::can('delete-designation')) {
 					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#designation-delete-modal" onclick="angular.element(this).scope().deleteDesignation(' . $designation->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
@@ -87,20 +87,28 @@ class DesignationController extends Controller {
 		// dd($request->all());
 		try {
 			$error_messages = [
-				'code.required' => 'Name is Required',
-				'code.unique' => 'Name is already taken',
-				'code.min' => 'Name is Minimum 3 Charachers',
-				'code.max' => 'Name is Maximum 64 Charachers',
-				'first_name.max' => 'Description is Maximum 255 Charachers',
+				'short_name.required' => 'Short Name is Required',
+				'short_name.unique' => 'Short Name is already taken',
+				'short_name.min' => 'Short Name is Minimum 3 Charachers',
+				'short_name.max' => 'Short Name is Maximum 32 Charachers',
+				'name.required' => 'Name is Required',
+				'name.unique' => 'Name is already taken',
+				'name.min' => 'Name is Minimum 3 Charachers',
+				'name.max' => 'Name is Maximum 191 Charachers',
 			];
 			$validator = Validator::make($request->all(), [
-				'code' => [
+				'short_name' => [
 					'required:true',
 					'min:3',
-					'max:64',
-					'unique:designations,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+					'max:32',
+					'unique:designations,short_name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
-				'first_name' => 'nullable|max:255',
+				'name' => [
+					'required:true',
+					'min:3',
+					'max:191',
+					'unique:designations,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+				],
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
@@ -110,32 +118,32 @@ class DesignationController extends Controller {
 			if (!$request->id) {
 				$designation = new Designation;
 				$designation->company_id = Auth::user()->company_id;
-				$user = new User;
-				$user->company_id = Auth::user()->company_id;
-				$user->created_by_id = Auth::user()->id;
+				// $user = new User;
+				// $user->company_id = Auth::user()->company_id;
+				// $user->created_by_id = Auth::user()->id;
 			} else {
 				$designation = Designation::withTrashed()->find($request->id);
-				$user = User::withTrashed()->where([
-					'entity_id' => $request->id,
-					'user_type_id' => 1,
-				]);
-				$user->updated_by_id = Auth::user()->id;
+				// $user = User::withTrashed()->where([
+				// 	'entity_id' => $request->id,
+				// 	'user_type_id' => 1,
+				// ]);
+				// $user->updated_by_id = Auth::user()->id;
 			}
 			$designation->fill($request->all());
 			if ($request->status == 'Inactive') {
 				$designation->deleted_at = Carbon::now();
-				$user->deleted_by_id = Auth::user()->id;
+				// $user->deleted_by_id = Auth::user()->id;
 			} else {
-				$user->deleted_by_id = NULL;
+				// $user->deleted_by_id = NULL;
 				$designation->deleted_at = NULL;
 			}
 			$designation->save();
 
-			$user->fill($request->user);
-			$user->has_mobile_login = 0;
-			$user->entity_id = $designation->id;
-			$user->user_type_id = 1;
-			$user->save();
+			// $user->fill($request->user);
+			// $user->has_mobile_login = 0;
+			// $user->entity_id = $designation->id;
+			// $user->user_type_id = 1;
+			// $user->save();
 
 			// $activity = new ActivityLog;
 			// $activity->date_time = Carbon::now();
@@ -174,18 +182,6 @@ class DesignationController extends Controller {
 		try {
 			$designation = Designation::withTrashed()->where('id', $request->id)->forceDelete();
 			if ($designation) {
-
-				$activity = new ActivityLog;
-				$activity->date_time = Carbon::now();
-				$activity->user_id = Auth::user()->id;
-				$activity->module = 'Designations';
-				$activity->entity_id = $request->id;
-				$activity->entity_type_id = 1420;
-				$activity->activity_id = 282;
-				$activity->activity = 282;
-				$activity->details = json_encode($activity);
-				$activity->save();
-
 				DB::commit();
 				return response()->json(['success' => true, 'message' => 'Designation Deleted Successfully']);
 			}
