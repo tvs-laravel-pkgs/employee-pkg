@@ -23,6 +23,8 @@ class DesignationsC extends Migration {
 				$table->timestamps();
 				$table->softDeletes();
 
+				$table->foreign('company_id')->references('id')->on('companies')->onDelete('CASCADE')->onUpdate('cascade');
+
 				$table->unique(["company_id", "name"]);
 				$table->unique(["company_id", "short_name"]);
 			});
