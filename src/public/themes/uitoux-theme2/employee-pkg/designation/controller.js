@@ -95,7 +95,7 @@ app.component('designationList', {
                 if (response.data.success) {
                     custom_noty('success', 'Designation Deleted Successfully');
                     $('#designations_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/designation-pkg/designation/list');
+                    $location.path('/employee-pkg/designation/list');
                 }
             });
         }
@@ -175,19 +175,15 @@ app.component('designationForm', {
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'code': {
+                'short_name': {
                     required: true,
                     minlength: 3,
-                    maxlength: 64,
+                    maxlength: 32,
                 },
-                'first_name': {
+                'name': {
                     required: true,
                     minlength: 3,
-                    maxlength: 64,
-                },
-                'last_name': {
-                    minlength: 3,
-                    maxlength: 255,
+                    maxlength: 191,
                 },
             },
             submitHandler: function(form) {
@@ -203,7 +199,7 @@ app.component('designationForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            $location.path('/designation-pkg/designation/list');
+                            $location.path('/employee-pkg/designation/list');
                             $scope.$apply();
                         } else {
                             $('#submit').button('reset');

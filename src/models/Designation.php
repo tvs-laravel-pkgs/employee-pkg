@@ -15,7 +15,7 @@ class Designation extends Model {
 	public $timestamps = true;
 	protected $fillable = [
 		'name',
-		'description',
+		'short_name',
 		'company_id',
 	];
 
