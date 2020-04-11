@@ -24,6 +24,11 @@ class Employee extends Model {
 	public function user() {
 		return $this->hasOne('App\User', 'entity_id')->where('users.user_type_id', 1);
 	}
+
+	public function designation() {
+		return $this->belongsTo('App\Designation');
+	}
+
 	public function employeeAttachment() {
 		return $this->hasOne('Abs\BasicPkg\Attachment', 'entity_id')->where('attachment_of_id', 120)->where('attachment_type_id', 140);
 	}
