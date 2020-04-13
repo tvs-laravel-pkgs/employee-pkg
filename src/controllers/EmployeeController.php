@@ -1,9 +1,9 @@
 <?php
 
 namespace Abs\EmployeePkg;
-use Abs\BasicPkg\Attachment;
 use Abs\EmployeePkg\Designation;
 use Abs\EmployeePkg\Employee;
+use App\Attachment;
 use App\Http\Controllers\Controller;
 use App\User;
 use Auth;
@@ -261,7 +261,7 @@ class EmployeeController extends Controller {
 					File::makeDirectory($employee_images_des, 0777, true);
 				}
 				$remove_previous_attachment = Attachment::where([
-					'entity_id' => $employee->id,
+					'entity_id' => $user->id,
 					'attachment_of_id' => 120,
 					'attachment_type_id' => 140,
 				])->first();
