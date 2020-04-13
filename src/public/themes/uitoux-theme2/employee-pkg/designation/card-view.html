@@ -3,7 +3,9 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Designations (<span id="table_info"></span>)</h1>
+                    <h1 class="title type-2">
+                        Designations ({{designations.length}})
+                    </h1>
                     <!-- <p class="subtitle">Masters / JV Masters / Employee Designation Designations</p> -->
                 </div><!-- Page Header Content -->
                 <div class="page-header-content button-block">
@@ -76,32 +78,41 @@
                                 </div>
                                 <div class="panel-body">
                                     <span class="label label-default">
+                                        <md-tooltip md-direction="top">
+                                            Employee code
+                                        </md-tooltip>
                                         {{employee.code}}
                                     </span>
                                     <span class="label label-primary" ng-if="employee.github_username">
                                         {{employee.github_username}}
                                     </span>
                                     <span class="label label-default">
+                                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
                                         {{employee.user.email}}
                                     </span>
                                     <span class="label label-success" ng-if="employee.personal_email">
+                                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
                                         {{employee.personal_email}}
                                     </span>
-                                    <span class="label label-default">
+                                    <span class="label label-danger">
                                         {{employee.user.username}}
                                     </span>
-                                    <span class="label label-default">
+                                    <span class="label label-primary">
+                                        <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
                                         {{employee.user.mobile_number}}
                                     </span>
                                     <span class="label label-info" ng-if="employee.alternate_mobile_number">
+                                        <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
                                         {{employee.alternate_mobile_number}}
                                     </span>
                                     <span class="label label-warning" ng-if="employee.date_of_join">
                                         {{employee.date_of_join}}
                                     </span>
-                                    <span class="label label-danger">Danger</span>
                                 </div>
                                 <div class="panel-footer">Panel footer</div>
+                            </div>
+                            <div ng-if="designation.employees.length==0">
+                                No employees found
                             </div>
                         </div>
                         <div class="panel-footer">
