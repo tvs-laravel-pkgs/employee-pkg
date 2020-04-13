@@ -278,11 +278,13 @@ app.component('employeeForm', {
                 },
                 'alternate_mobile_number': {
                     number: true,
+                    minlength: 10,
                     maxlength: 12,
                 },
 
                 'user[mobile_number]': {
                     number: true,
+                    minlength: 10,
                     maxlength: 12,
                 },
                 'user[password]': {
