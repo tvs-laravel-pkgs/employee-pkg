@@ -196,7 +196,9 @@ app.component('employeeForm', {
             // console.log(response);
             self.employee = response.data.employee;
             self.designation_list = response.data.designation_list;
-            self.employee_attchment_url = employee_attchment_url;
+            self.role_list = response.data.role_list;
+            console.log(self.role_list);
+            self.user_attchment_url = user_attchment_url;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
@@ -242,6 +244,18 @@ app.component('employeeForm', {
             }
         }
 
+        $('.DateOfJoinPicker').bootstrapDP({
+            format: "dd-mm-yyyy",
+            autoclose: "true",
+            todayHighlight: true,
+            // startDate: min_offset,
+            // endDate: max_offset
+        });
+
+        $.validator.addMethod("roles", function(value, element) {
+            return this.optional(element) || value != '[]';
+        }, " This field is required.");
+
         $("input:text:visible:first").focus();
 
         var form_id = '#form';
@@ -259,8 +273,7 @@ app.component('employeeForm', {
                     maxlength: 64,
                 },
                 'user[last_name]': {
-                    required: true,
-                    minlength: 3,
+                    minlength: 1,
                     maxlength: 255,
                 },
                 'user[username]': {
@@ -270,11 +283,15 @@ app.component('employeeForm', {
                 },
                 'alternate_mobile_number': {
                     number: true,
+                    minlength: 10,
                     maxlength: 12,
                 },
-
+                'roles': {
+                    roles: true,
+                },
                 'user[mobile_number]': {
                     number: true,
+                    minlength: 10,
                     maxlength: 12,
                 },
                 'user[password]': {
@@ -288,6 +305,7 @@ app.component('employeeForm', {
                     minlength: 5,
                     maxlength: 16,
                 },
+
             },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
