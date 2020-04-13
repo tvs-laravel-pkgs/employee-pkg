@@ -24,33 +24,90 @@
                         </button>
                     </div>
                 </div><!-- Page Header Content -->
-                <div class="page-header-content search-block">
-                    <div class="search_filter">
-                        <label>
-                            <input type="search" id="search_designation" class="form-control" placeholder="Search" />
-                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
-                        </label>
-                    </div><!-- Search Filter -->
-                </div><!-- Page Header Content -->
                 <div class="page-header-content button-block" ng-show="$ctrl.add_permission">
                     <a href="#!/employee-pkg/designation/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">Add New</a>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Right -->
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
-    <div class="page-main-content list-page-content">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <table class="table" id="designations_list" style="width: 100% !important;">
-                        <thead>
-                            <tr>
-                                <th class="action">Actions</th>
-                                <th>Name</th>
-                                <th>Short Name</th>
-                            </tr>
-                        </thead>
-                    </table>
+    <div class="page-main-content">
+        <br />
+        <div class="container-fluid" style="overflow-x: scroll;">
+            <div style="width: 5000px;" class="row" dnd-list="$ctrl.modules" dnd-allowed-types="$ctrl.module_types" dnd-drop="updateModulePriority(item,index)">
+                <div class="col-md-3" style="width: 100%; max-width: 350px; float: left;" dnd-draggable="designation" dnd-effect-allowed="move" dnd-moved="$ctrl.designations.splice(key1, 1)" dnd-type="'designation'" ng-repeat="(key1, designation) in designations">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                {{designation.name}} ({{designation.short_name}})
+                            </h3>
+                            <div>
+                                <span class="label label-danger">
+                                    <md-tooltip md-direction="top">
+                                        Status
+                                    </md-tooltip>
+                                    {{designation.status}}
+                                </span>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-default" ng-click="showDesignationForm(designation)" title="Edit Designation">
+                                        <md-tooltip md-direction="top">
+                                            Edit Designation
+                                        </md-tooltip>
+                                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-default" ng-click="$ctrl.module=module;showTaskForm({},$event)" title="Add Task">
+                                        <md-tooltip md-direction="top">
+                                            Add Task to {{designation.name}} Designation
+                                        </md-tooltip>
+                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-default" ng-click="deleteDesignation(designation,$event)">
+                                        <md-tooltip md-direction="top">
+                                            Delete Designation
+                                        </md-tooltip>
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="panel panel-default" ng-repeat="(key, employee) in designation.employees">
+                                <div class="panel-heading">
+                                    {{employee.user.first_name}} {{employee.user.last_name}}
+                                </div>
+                                <div class="panel-body">
+                                    <span class="label label-default">
+                                        {{employee.code}}
+                                    </span>
+                                    <span class="label label-primary" ng-if="employee.github_username">
+                                        {{employee.github_username}}
+                                    </span>
+                                    <span class="label label-default">
+                                        {{employee.user.email}}
+                                    </span>
+                                    <span class="label label-success" ng-if="employee.personal_email">
+                                        {{employee.personal_email}}
+                                    </span>
+                                    <span class="label label-default">
+                                        {{employee.user.username}}
+                                    </span>
+                                    <span class="label label-default">
+                                        {{employee.user.mobile_number}}
+                                    </span>
+                                    <span class="label label-info" ng-if="employee.alternate_mobile_number">
+                                        {{employee.alternate_mobile_number}}
+                                    </span>
+                                    <span class="label label-warning" ng-if="employee.date_of_join">
+                                        {{employee.date_of_join}}
+                                    </span>
+                                    <span class="label label-danger">Danger</span>
+                                </div>
+                                <div class="panel-footer">Panel footer</div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            &nbsp;
+                        </div>
+                    </div>
                 </div><!-- Column -->
             </div><!-- Row -->
         </div><!-- Container -->
@@ -62,7 +119,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title" id="myModalLabel">Employee Designation Filter</h5>
+                <h5 class="modal-title" id="myModalLabel">Employee Designation Designation Filter</h5>
             </div><!-- Modal Header -->
             <div class="modal-body">
                 <div class="modal-form">

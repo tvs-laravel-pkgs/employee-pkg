@@ -218,3 +218,34 @@ app.component('designationForm', {
         });
     }
 });
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+app.component('designationCardView', {
+    templateUrl: designation_card_view_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope) {
+        $scope.loading = true;
+        var self = this;
+        // console.log(' ======= ');
+        // self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('tasks')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        
+        $http.get(
+            laravel_routes['getDesignations']
+        ).then(function(response) {
+            if (!response.data.success) {
+                console(response);
+                showErrorNoty(response.data);
+                return;
+            }
+
+            $scope.designations = response.data.designations;
+            
+        });
+
+    }
+});
+
+

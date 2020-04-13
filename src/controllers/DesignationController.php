@@ -190,4 +190,25 @@ class DesignationController extends Controller {
 			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
 		}
 	}
+
+	public function getDesignations(Request $request) {
+		$designations = Designation::withTrashed()
+			->with([
+				'employees',
+				'employees.user'
+			])
+			->select([
+				'designations.id',
+				'designations.name',
+				'designations.short_name',
+				DB::raw('IF(designations.deleted_at IS NULL, "Active","Inactive") as status'),
+			])
+			->where('designations.company_id', Auth::user()->company_id)
+			->get();
+
+		return response()->json([
+			'success' => true,
+			'designations' => $designations,
+		]);		
+	}
 }

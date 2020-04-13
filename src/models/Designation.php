@@ -54,4 +54,8 @@ class Designation extends Model {
 		return $record;
 	}
 
+	public function employees(){
+		return $this->hasMany('App\Employee');
+	}
+	
 }

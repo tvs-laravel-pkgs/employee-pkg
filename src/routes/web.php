@@ -14,5 +14,6 @@ Route::group(['namespace' => 'Abs\EmployeePkg', 'middleware' => ['web', 'auth'],
 	Route::get('/designation/get-form-data', 'DesignationController@getDesignationFormData')->name('getDesignationFormData');
 	Route::post('/designation/save', 'DesignationController@saveDesignation')->name('saveDesignation');
 	Route::get('/designation/delete', 'DesignationController@deleteDesignation')->name('deleteDesignation');
+	Route::get('/designation/card-view', 'DesignationController@getDesignations')->name('getDesignations');
 
 });
