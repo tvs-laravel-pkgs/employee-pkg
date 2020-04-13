@@ -196,6 +196,8 @@ app.component('employeeForm', {
             // console.log(response);
             self.employee = response.data.employee;
             self.designation_list = response.data.designation_list;
+            self.role_list = response.data.role_list;
+            console.log(self.role_list);
             self.employee_attchment_url = employee_attchment_url;
             self.action = response.data.action;
             $rootScope.loading = false;
@@ -250,6 +252,9 @@ app.component('employeeForm', {
             // endDate: max_offset
         });
 
+        $.validator.addMethod("roles", function(value, element) {
+            return this.optional(element) || value != '[]';
+        }, " This field is required.");
 
         $("input:text:visible:first").focus();
 
@@ -281,7 +286,9 @@ app.component('employeeForm', {
                     minlength: 10,
                     maxlength: 12,
                 },
-
+                'roles': {
+                    roles: true,
+                },
                 'user[mobile_number]': {
                     number: true,
                     minlength: 10,
@@ -298,6 +305,7 @@ app.component('employeeForm', {
                     minlength: 5,
                     maxlength: 16,
                 },
+
             },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);

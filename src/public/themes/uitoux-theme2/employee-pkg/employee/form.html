@@ -163,6 +163,18 @@
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
+                                            <div class="separate-form-group">
+                                                <label>Role<span class="mandatory">*</span></label>
+                                                <ui-select multiple ng-model="$ctrl.employee.roles" id="secondary" on-remove="$ctrl.removed($item,$model)" theme="bootstrap" close-on-select="false" style="">
+                                                    <ui-select-match placeholder="Select Roles">{{$item.name}}</ui-select-match>
+                                                    <ui-select-choices repeat="i.id as i in $ctrl.role_list | propsFilter: {name: $select.search}">
+                                                        <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                                <input type="hidden" name="roles" id="roles" value="{{$ctrl.employee.roles}}" class="required">
+                                            </div><!-- Field -->
+                                        </div><!-- column -->
+                                        <div class="col-md-3">
                                             <div class="profile-upload">
                                                 <!-- <img class="img-responsive" src="{{ URL::asset('public/theme/img/content/profile.jpg') }}" alt="Profile Upload" /> -->
                                                 <div class="avatar-upload">

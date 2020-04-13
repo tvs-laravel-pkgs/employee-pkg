@@ -4,6 +4,7 @@ namespace Abs\EmployeePkg;
 use Abs\EmployeePkg\Employee;
 use Abs\EmployeePkg\Designation;
 use Abs\BasicPkg\Attachment;
+use Abs\RolePkg\Role;
 use App\ActivityLog;
 use App\Http\Controllers\Controller;
 use App\User;
@@ -112,6 +113,7 @@ class EmployeeController extends Controller {
 			$employee->password_change = 'Yes';
 		} else {
 			$employee = Employee::withTrashed()->with('user','employeeAttachment')->find($id);
+			$employee->roles = $employee->user->roles()->pluck('role_id')->toArray();
 			$action = 'Edit';
 			$employee->password_change = 'No';
 			$this->data['employee_attachment']=Attachment::select('name')
@@ -123,6 +125,7 @@ class EmployeeController extends Controller {
 		$this->data['success'] = true;
 		$this->data['employee'] = $employee;
 		$this->data['designation_list'] =collect(Designation::select('name', 'id')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Designation']);
+		$this->data['role_list'] = collect(Role::getList());
 		$this->data['action'] = $action;
 		return response()->json($this->data);
 	}
@@ -250,7 +253,8 @@ class EmployeeController extends Controller {
 			$user->entity_id = $employee->id;
 			$user->user_type_id = 1;
 			$user->save();
-
+			//USER ROLE SYNC
+			$user->roles()->sync(json_decode($request->roles));
 			//Employee Profile Attachment
 			$employee_images_des = storage_path('app/public/employee/attachments/');
 			//dump($employee_images_des);
