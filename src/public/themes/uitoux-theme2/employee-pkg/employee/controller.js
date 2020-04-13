@@ -242,7 +242,7 @@ app.component('employeeForm', {
             }
         }
 
-        $('.projectVersionPicker').bootstrapDP({
+        $('.DateOfJoinPicker').bootstrapDP({
             format: "dd-mm-yyyy",
             autoclose: "true",
             todayHighlight: true,
