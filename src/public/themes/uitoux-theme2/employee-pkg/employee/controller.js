@@ -242,6 +242,15 @@ app.component('employeeForm', {
             }
         }
 
+        $('.projectVersionPicker').bootstrapDP({
+            format: "dd-mm-yyyy",
+            autoclose: "true",
+            todayHighlight: true,
+            // startDate: min_offset,
+            // endDate: max_offset
+        });
+
+
         $("input:text:visible:first").focus();
 
         var form_id = '#form';
@@ -259,8 +268,7 @@ app.component('employeeForm', {
                     maxlength: 64,
                 },
                 'user[last_name]': {
-                    required: true,
-                    minlength: 3,
+                    minlength: 1,
                     maxlength: 255,
                 },
                 'user[username]': {

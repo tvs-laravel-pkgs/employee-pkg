@@ -69,27 +69,41 @@
                                             <div class="input-text form-group">
                                                 <label>
                                                     Last Name
-                                                    <sup class="mandatory">*</sup>
                                                 </label>
                                                 <input type="text" class="form-control" ng-model="$ctrl.employee.user.last_name" name="user[last_name]" placeholder="Enter Last Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
+                                        <div class="col-sm-3">
+                                            <div class="separate-form-group">
+                                                <label>Designation</label>
+                                                <ui-select ng-model="$ctrl.employee.designation_id" theme="select2">
+                                                    <ui-select-match placeholder="Select Designation">
+                                                        {{$select.selected.name || $select.selected}}
+                                                    </ui-select-match>
+                                                    <ui-select-choices repeat="i.id as i in $ctrl.designation_list | propsFilter: {name: $select.search}">
+                                                        <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                                <input type="hidden" name="designation_id" value="{{$ctrl.employee.designation_id}}" class="">
+                                            </div><!-- Field -->
+                                        </div><!-- Column -->
+                                    </div>
+                                    <!--row-->
+                                    <div class="row">
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Official Email
-                                                    <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="email" class="form-control required" ng-model="$ctrl.employee.user.email" name="user[email]" placeholder="Enter Official Email ID" />
+                                                <input type="email" class="form-control" ng-model="$ctrl.employee.user.email" name="user[email]" placeholder="Enter Official Email ID" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Mobile Number
-                                                    <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.employee.user.mobile_number" name="user[mobile_number]" placeholder="Enter Mobile Number" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.employee.user.mobile_number" name="user[mobile_number]" placeholder="Enter Mobile Number" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -108,6 +122,9 @@
                                                 <input type="text" class="form-control" ng-model="$ctrl.employee.alternate_mobile_number" name="alternate_mobile_number" placeholder="Enter Alternate Mobile Number" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
+                                    </div>
+                                    <!--row-->
+                                    <div class="row">
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
@@ -145,7 +162,7 @@
                                                 <input type="password" class="form-control" ng-model="$ctrl.employee.user.password" name="user[password]" id="password" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
-                                        <div class="col-md-6">
+                                        <div class="col-md-3">
                                             <div class="profile-upload">
                                                 <!-- <img class="img-responsive" src="{{ URL::asset('public/theme/img/content/profile.jpg') }}" alt="Profile Upload" /> -->
                                                 <div class="avatar-upload">
@@ -162,6 +179,19 @@
                                             </div><!-- Profile Upload -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>
+                                                    Date Of Join
+                                                </label>
+                                                <div class="input-group date projectVersionPicker" data-provide="datepicker">
+                                                    <input type="text" name="date_of_join" ng-model="$ctrl.employee.date_of_join" class="form-control" placeholder="Select Date" value="{{$ctrl.employee.date_of_join}}" />
+                                                    <div class="input-group-addon">
+                                                        <img class="img-responsive" ng-src="{{theme}}img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                    </div>
+                                                </div><!-- Input Group -->
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Active Status
@@ -175,20 +205,6 @@
                                                 </div>
                                             </div><!-- Form Group -->
                                         </div><!-- Column -->
-                                        <div class="col-sm-3">
-                                            <div class="separate-form-group">
-                                                <label>Designation</label>
-                                                <ui-select ng-model="$ctrl.employee.designation_id" theme="select2">
-                                                    <ui-select-match placeholder="Select Designation">
-                                                        {{$select.selected.name || $select.selected}}
-                                                    </ui-select-match>
-                                                    <ui-select-choices repeat="i.id as i in $ctrl.designation_list | propsFilter: {name: $select.search}">
-                                                        <div ng-bind-html="i.name | highlight: $select.search"></div>
-                                                    </ui-select-choices>
-                                                </ui-select>
-                                                <input type="hidden" name="designation_id" value="{{$ctrl.employee.designation_id}}" class="">
-                                            </div><!-- Field -->
-                                        </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
