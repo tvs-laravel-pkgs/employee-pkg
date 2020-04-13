@@ -19,6 +19,7 @@ class Employee extends Model {
 		'github_username',
 		'personal_email',
 		'alternate_mobile_number',
+		'date_of_join'
 	];
 
 	public function user() {
@@ -31,6 +32,13 @@ class Employee extends Model {
 
 	public function employeeAttachment() {
 		return $this->hasOne('Abs\BasicPkg\Attachment', 'entity_id')->where('attachment_of_id', 120)->where('attachment_type_id', 140);
+	}
+	public function getDateOfJoinAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	}
+
+	public function setDateOfJoinAttribute($date) {
+		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
 	public static function createFromObject($record_data) {
