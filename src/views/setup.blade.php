@@ -41,7 +41,7 @@
 	//EMPLOYEES
     var employee_list_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/employee/list.html')}}";
     var employee_form_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/employee/form.html')}}";
-    var employee_attchment_url = "{{asset('/storage/app/public/user-profile-images')}}";
+    var user_attchment_url = "{{asset('/storage/app/public/user-profile-images')}}";
 	//DESIGNATION
     var designation_list_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/designation/list.html')}}";
     var designation_form_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/designation/form.html')}}";

@@ -198,7 +198,7 @@ app.component('employeeForm', {
             self.designation_list = response.data.designation_list;
             self.role_list = response.data.role_list;
             console.log(self.role_list);
-            self.employee_attchment_url = employee_attchment_url;
+            self.user_attchment_url = user_attchment_url;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {

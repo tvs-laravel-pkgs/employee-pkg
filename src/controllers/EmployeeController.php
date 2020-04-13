@@ -2,7 +2,7 @@
 
 namespace Abs\EmployeePkg;
 use Abs\EmployeePkg\Designation;
-use Abs\Role;
+use App\Role;
 use App\ActivityLog;
 use App\Employee;
 use App\Attachment;
@@ -260,12 +260,12 @@ class EmployeeController extends Controller {
 			//USER ROLE SYNC
 			$user->roles()->sync(json_decode($request->roles));
 			//Employee Profile Attachment
-			$employee_images_des = storage_path('app/public/user-profile-images/');
-			//dump($employee_images_des);
-			Storage::makeDirectory($employee_images_des, 0777);
+			$user_images_des = storage_path('app/public/user-profile-images/');
+			//dump($user_images_des);
+			Storage::makeDirectory($user_images_des, 0777);
 			if (!empty($request['attachment'])) {
-				if (!File::exists($employee_images_des)) {
-					File::makeDirectory($employee_images_des, 0777, true);
+				if (!File::exists($user_images_des)) {
+					File::makeDirectory($user_images_des, 0777, true);
 				}
 				$remove_previous_attachment = Attachment::where([
 					'entity_id' => $user->id,
@@ -273,29 +273,22 @@ class EmployeeController extends Controller {
 					'attachment_type_id' => 140,
 				])->first();
 				if (!empty($remove_previous_attachment)) {
-					$img_path = $employee_images_des . $remove_previous_attachment->name;
+					$img_path = $user_images_des . $remove_previous_attachment->name;
 					if (File::exists($img_path)) {
 						File::delete($img_path);
 					}
 					$remove = $remove_previous_attachment->forceDelete();
 				}
-
-				/*$exists_path=storage_path('app/public/employee/attachments/'.$employee->id.'/');
-					//dd($exists_path);
-					if (is_dir($exists_path))
-					{
-						unlink($exists_path);
-				*/
 				$extension = $request['attachment']->getClientOriginalExtension();
 				$request['attachment']->move(storage_path('app/public/user-profile-images/'), $user->id . '.' . $extension);
-				$employee_attachement = new Attachment;
-				$employee_attachement->company_id = Auth::user()->company_id;
-				$employee_attachement->attachment_of_id = 120; //ATTACHMENT OF EMPLOYEE
-				$employee_attachement->attachment_type_id = 140; //ATTACHMENT TYPE  EMPLOYEE
-				$employee_attachement->entity_id = $user->id;
-				$employee_attachement->name = $user->id . '.' . $extension;
-				$employee_attachement->save();
-				$user->profile_image_id = $employee_attachement->id;
+				$user_attachement = new Attachment;
+				$user_attachement->company_id = Auth::user()->company_id;
+				$user_attachement->attachment_of_id = 120; //ATTACHMENT OF EMPLOYEE
+				$user_attachement->attachment_type_id = 140; //ATTACHMENT TYPE  EMPLOYEE
+				$user_attachement->entity_id = $user->id;
+				$user_attachement->name = $user->id . '.' . $extension;
+				$user_attachement->save();
+				$user->profile_image_id = $user_attachement->id;
 				$user->save();
 
 			}
