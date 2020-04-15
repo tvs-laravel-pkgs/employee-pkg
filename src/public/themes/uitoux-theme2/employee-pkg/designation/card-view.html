@@ -27,7 +27,7 @@
                     </div>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content button-block" ng-show="$ctrl.add_permission">
-                    <a href="#!/employee-pkg/designation/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">Add New</a>
+                    <a href="javascript:;" class="btn btn-primary my-tooltip" ng-click="showDesignationForm({})" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">Add New</a>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Right -->
         </div><!-- Page Header Inner -->
@@ -35,7 +35,7 @@
     <div class="page-main-content">
         <br />
         <div class="container-fluid" style="overflow-x: scroll;">
-            <div style="width: 5000px;" class="row" dnd-list="$ctrl.modules" dnd-allowed-types="$ctrl.module_types" dnd-drop="updateModulePriority(item,index)">
+            <div style="width: 5000px;" class="row" dnd-list="$ctrl.designations" dnd-allowed-types="'designation'" dnd-drop="updateModulePriority(item,index)">
                 <div class="col-md-3" style="width: 100%; max-width: 350px; float: left;" dnd-draggable="designation" dnd-effect-allowed="move" dnd-moved="$ctrl.designations.splice(key1, 1)" dnd-type="'designation'" ng-repeat="(key1, designation) in designations">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
@@ -56,13 +56,13 @@
                                         </md-tooltip>
                                         <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-default" ng-click="$ctrl.module=module;showTaskForm({},$event)" title="Add Task">
+                                    <button type="button" class="btn btn-sm btn-default" ng-click="$ctrl.module=module;showTaskForm({},0,$event)" title="Add Employee">
                                         <md-tooltip md-direction="top">
-                                            Add Task to {{designation.name}} Designation
+                                            Add Employee to {{designation.name}} Designation
                                         </md-tooltip>
                                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-default" ng-click="deleteDesignation(designation,$event)">
+                                    <button type="button" class="btn btn-sm btn-default" ng-click="deleteDesignation(designation.id,$event)">
                                         <md-tooltip md-direction="top">
                                             Delete Designation
                                         </md-tooltip>
@@ -109,7 +109,7 @@
                                         {{employee.date_of_join}}
                                     </span>
                                 </div>
-                                <div class="panel-footer">Panel footer</div>
+                                <div class="panel-footer"> </div>
                             </div>
                             <div ng-if="designation.employees.length==0">
                                 No employees found
@@ -182,3 +182,4 @@
     </div>
 </div>
 <!-- Modal -->
+<ng-include src="designation_modal_form_template_url" ng-init="designation = $ctrl.designation"></ng-include>

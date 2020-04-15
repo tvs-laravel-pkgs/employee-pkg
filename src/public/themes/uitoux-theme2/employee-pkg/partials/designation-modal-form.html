@@ -1,0 +1,50 @@
+<div class="modal fade filter" id="designation-form-modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close">
+                    <i class="glyphicon glyphicon-remove"></i>
+                </button>
+                <h5 class="modal-title" id="myModalLabel">
+                    <% designation.id ? 'Edit' : 'Add' %> Designation
+                    <!-- <% $ctrl.project_version ? '('+$ctrl.project_version.project.short_name+'-'+$ctrl.project_version.number+')' : '' %> -->
+                </h5>
+            </div><!-- Modal Header -->
+            <form id="designation_form">
+                <input type="hidden" name="id" value="<% $ctrl.designation.id %>">
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        Name
+                                        <sup class="mandatory">*</sup>
+                                    </label>
+                                    <input type="text" class="form-control" name="name" autocomplete="off" ng-model="$ctrl.designation.name" id="designation-name">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Short name
+                                        <sup class="mandatory">*</sup>
+                                    </label>
+                                    <input type="text" class="form-control" name="short_name" autocomplete="off" ng-model="$ctrl.designation.short_name" id="designation-short-name">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                        </div>
+                        <!--row-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-rose" ng-click="saveDesignation()">
+                                    Submit
+                                </button>
+                            </div>
+                        </div><!-- Row -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+            </form>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
