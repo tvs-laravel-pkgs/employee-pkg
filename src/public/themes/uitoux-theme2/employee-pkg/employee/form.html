@@ -204,6 +204,25 @@
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Send Invitation<sup class="mandatory">*</sup></label>
+                                                <div class="tab-switch">
+                                                    <md-switch ng-model="$ctrl.switch_invitation" aria-label="Switch 2" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
+                                                        {{ $ctrl.switch_invitation }}
+                                                    </md-switch>
+                                                    <input type="hidden" id="user[invitation_sent]" name="user[invitation_sent]" value="{{$ctrl.switch_invitation}}" class="required">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Slack Api Url
+                                                </label>
+                                                <input type="text" class="form-control" ng-model="$ctrl.employee.user.slack_api_url" name="user[slack_api_url]" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Active Status

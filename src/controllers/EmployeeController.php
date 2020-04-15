@@ -2,6 +2,7 @@
 
 namespace Abs\EmployeePkg;
 use Abs\EmployeePkg\Designation;
+use Abs\UserPkg\Mail\UserInvitationMail;
 use App\Role;
 use App\ActivityLog;
 use App\Employee;
@@ -13,6 +14,7 @@ use Carbon\Carbon;
 use DB;
 use Entrust;
 use File;
+use Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Validator;
@@ -111,6 +113,7 @@ class EmployeeController extends Controller {
 			$employee = new Employee;
 			$action = 'Add';
 			$employee->password_change = 'Yes';
+			//$employee->invitation_sent = 'No';
 		} else {
 
 			$employee = Employee::withTrashed()->with('user', 'user.profileImage')->find($id);
@@ -242,6 +245,7 @@ class EmployeeController extends Controller {
 				$user->updated_by_id = Auth::user()->id;
 			}
 			$employee->fill($request->all());
+			//dd($user);
 			if ($request->status == 'Inactive') {
 				$employee->deleted_at = Carbon::now();
 				$user->deleted_by_id = Auth::user()->id;
@@ -250,8 +254,12 @@ class EmployeeController extends Controller {
 				$employee->deleted_at = NULL;
 			}
 			$employee->save();
-			//dd($employee);
-
+			if ($request->user['invitation_sent'] == 'No') {
+				$user->invitation_sent=0;
+			} else {
+				$user->invitation_sent=1;
+			}
+			//dd($request->user['invitation_sent']);
 			$user->fill($request->user);
 			$user->has_mobile_login = 0;
 			$user->entity_id = $employee->id;
@@ -292,6 +300,18 @@ class EmployeeController extends Controller {
 				$user->save();
 
 			}
+			if($user->invitation_sent==1){//TO SEND USER INVIATATION
+				if($user->email){
+					$mail = $this->send_invitation_mail($user);
+				}
+				if(!empty($user->slack_api_url)){
+					$data['subject'] = 'User Invitation Sent';
+					$data['send_to'] = $user->slack_api_url;
+					$data['action_from'] = "UserInvite";
+					$data['url'] = url('/login');
+					$user->notify(new \App\Notifications\Slack($data));
+				}
+			}
 
 			// $activity = new ActivityLog;
 			// $activity->date_time = Carbon::now();
@@ -323,6 +343,15 @@ class EmployeeController extends Controller {
 				'error' => $e->getMessage(),
 			]);
 		}
+	}
+	function send_invitation_mail($user) {
+		$arr['user_id'] = $user->id;
+		$arr['user_name'] = $user->username;
+		$arr['subject'] = 'User invitation mail for PMS web portal';
+		$arr['to_email'] = $user->email;
+		//dd($arr);
+		$MailInstance = new UserInvitationMail($arr);
+		return Mail::send($MailInstance);
 	}
 
 	public function deleteEmployee(Request $request) {

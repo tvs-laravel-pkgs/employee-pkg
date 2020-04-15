@@ -214,6 +214,12 @@ app.component('employeeForm', {
                 } else {
                     self.switch_password = 'Yes';
                 }
+                if (self.employee.user.invitation_sent == 0) {
+                    self.switch_invitation = 'No';
+                } else {
+                    self.switch_invitation = 'Yes';
+                }
+
                 // console.log(response.data.employee_attachment);
                 // if (response.data.employee_attachment.name != '' && response.data.employee_attachment.name != 'null') {
                 //     self.employee_attachment_name = response.data.employee_attachment.name;
@@ -227,6 +233,7 @@ app.component('employeeForm', {
                 $("#hide_password").show();
                 $("#password").prop('disabled', false);
                 self.switch_password = 'Yes';
+                self.switch_invitation = 'Yes';
                 self.employee_attachment_name = '';
             }
         });
