@@ -179,6 +179,7 @@ class DesignationController extends Controller {
 
 	public function deleteDesignation(Request $request) {
 		DB::beginTransaction();
+		// dd($request->id);
 		try {
 			$designation = Designation::withTrashed()->where('id', $request->id)->forceDelete();
 			if ($designation) {

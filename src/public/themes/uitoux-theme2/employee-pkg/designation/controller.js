@@ -226,12 +226,13 @@ app.component('designationCardView', {
         $scope.loading = true;
         var self = this;
         // console.log(' ======= ');
-        // self.hasPermission = HelperService.hasPermission;
-        // if (!self.hasPermission('tasks')) {
-        //     window.location = "#!/page-permission-denied";
-        //     return false;
-        // }
-        
+        self.hasPermission = HelperService.hasPermission;
+        if (!self.hasPermission('designations')) {
+            window.location = "#!/page-permission-denied";
+            return false;
+        }
+        self.add_permission = self.hasPermission('add-designation');
+        $scope.designation_modal_form_template_url = designation_modal_form_template_url;
         $http.get(
             laravel_routes['getDesignations']
         ).then(function(response) {
@@ -240,12 +241,82 @@ app.component('designationCardView', {
                 showErrorNoty(response.data);
                 return;
             }
-
             $scope.designations = response.data.designations;
-            
         });
 
+        $scope.showDesignationForm = function(designation) {
+            $('#designation-form-modal').modal('show');
+            $('#designation-name').focus();
+            self.designation = designation;
+        }
+
+        $scope.saveDesignation = function() {
+            var designation_form = '#designation_form';
+            var v = jQuery(designation_form).validate({
+                ignore: '',
+                rules: {
+                    'name': {
+                        required: true,
+                    },
+                    'short_name': {
+                        required: true,
+                    },
+                },
+                invalidHandler: function(event, validator) {
+                    console.log(validator.errorList);
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(designation_form)[0]);
+                    $('#submit').button('loading');
+                    $.ajax({
+                            url: laravel_routes['saveDesignation'],
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            $('#submit').button('reset');
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+
+                            $('#designation-form-modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+
+                            $route.reload();
+                        })
+                        .fail(function(xhr) {
+                            $('#submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        //DELETE
+        $scope.deleteDesignation = function($id) {
+            $('#designation-delete-modal').modal('show');
+            $('#designation_id').val($id);
+        }
+        $scope.deleteConfirm = function() {
+            $id = $('#designation_id').val();
+            $http.get(
+                laravel_routes['deleteDesignation'], {
+                    params: {
+                        id: $id,
+                    }
+                }
+            ).then(function(response) {
+                if (response.data.success) {
+                    custom_noty('success', 'Designation Deleted Successfully');
+                    $('#designations_list').DataTable().ajax.reload(function(json) {});
+                    $location.path('/employee-pkg/designation/card-view');
+                }
+            });
+        }
     }
 });
-
-
