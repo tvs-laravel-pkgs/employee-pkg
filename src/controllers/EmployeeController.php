@@ -150,9 +150,6 @@ class EmployeeController extends Controller {
 				'code.unique' => 'Code is already taken',
 				'code.min' => 'Code is Minimum 3 Charachers',
 				'code.max' => 'Code is Maximum 64 Charachers',
-				'first_name.max' => 'Description is Maximum 255 Charachers',
-				'personal_email.unique' => 'Personal Email is already taken',
-				'alternate_mobile_number.max' => 'Alternate Mobile Number is Maximum 10 Charachers',
 				'github_username.max' => 'Github Username is Maximum 64 Charachers',
 			];
 			$validator = Validator::make($request->all(), [
@@ -162,13 +159,6 @@ class EmployeeController extends Controller {
 					'max:64',
 					'unique:employees,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
-				'personal_email' => [
-					'nullable',
-					'min:3',
-					'max:64',
-					'unique:employees,personal_email,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
-				],
-				'alternate_mobile_number' => 'nullable|max:10',
 				'github_username' => 'nullable|max:64',
 			], $error_messages);
 			if ($validator->fails()) {
@@ -181,14 +171,18 @@ class EmployeeController extends Controller {
 				//'last_name.required' => 'Last Name is Required',
 				'last_name.min' => 'Last Name is Minimum 1 Charachers',
 				'last_name.max' => 'Last Name is Maximum 32 Charachers',
-				'email.required' => 'Email is Required',
 				'email.min' => 'Email is Minimum 3 Charachers',
 				'email.max' => 'Email is Maximum 191 Charachers',
 				'email.unique' => 'Official Email is already taken',
+				'personal_email.min' => 'Personal Email is Minimum 3 Charachers',
+				'personal_email.max' => 'Personal Email is Maximum 191 Charachers',
+				'personal_email.unique' => 'Personal Email is already taken',
 				'mobile_number.required' => 'Mobile Number is Required',
 				'mobile_number.min' => 'Mobile Number is Minimum 10 Charachers',
 				'mobile_number.max' => 'Mobile Number is Maximum 10 Charachers',
 				'mobile_number.unique' => 'Mobile Number is already taken',
+				'alternate_mobile_number.min' => 'Alternate Mobile Number is Minimum 10 Charachers',
+				'alternate_mobile_number.max' => 'Alternate Mobile Number is Maximum 10 Charachers',
 				'username.required' => 'Username Number is Required',
 				'username.min' => 'Username is Minimum 3 Charachers',
 				'username.max' => 'Username is Maximum 32 Charachers',
@@ -211,11 +205,22 @@ class EmployeeController extends Controller {
 					'max:191',
 					'unique:users,email,' . $request->id . ',entity_id',
 				],
+				'personal_email' => [
+					'nullable',
+					'min:3',
+					'max:64',
+					'unique:users,personal_email,' . $request->id . ',entity_id',
+				],
 				'mobile_number' => [
 					'nullable',
 					'min:10',
 					'max:10',
 					'unique:users,mobile_number,' . $request->id . ',entity_id',
+				],
+				'alternate_mobile_number' => [
+					'nullable',
+					'min:10',
+					'max:10',
 				],
 				'username' => [
 					'required:true',

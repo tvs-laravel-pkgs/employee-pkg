@@ -17,8 +17,6 @@ class Employee extends Model {
 		'code',
 		'designation_id',
 		'github_username',
-		'personal_email',
-		'alternate_mobile_number',
 		'date_of_join'
 	];
 

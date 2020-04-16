@@ -111,7 +111,7 @@
                                                 <label>
                                                     Personal Email
                                                 </label>
-                                                <input type="email" class="form-control" ng-model="$ctrl.employee.personal_email" name="personal_email" placeholder="Enter Personal Email" />
+                                                <input type="email" class="form-control" ng-model="$ctrl.employee.user.personal_email" name="user[personal_email]" placeholder="Enter Personal Email" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -119,7 +119,7 @@
                                                 <label>
                                                     Alternate Mobile Number
                                                 </label>
-                                                <input type="text" class="form-control" ng-model="$ctrl.employee.alternate_mobile_number" name="alternate_mobile_number" placeholder="Enter Alternate Mobile Number" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.employee.user.alternate_mobile_number" name="user[alternate_mobile_number]" placeholder="Enter Alternate Mobile Number" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                     </div>
@@ -197,6 +197,19 @@
                                                 </label>
                                                 <div class="input-group date DateOfJoinPicker" data-provide="datepicker">
                                                     <input type="text" name="date_of_join" ng-model="$ctrl.employee.date_of_join" class="form-control" placeholder="Select Date" value="{{$ctrl.employee.date_of_join}}" />
+                                                    <div class="input-group-addon">
+                                                        <img class="img-responsive" ng-src="{{theme}}img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                    </div>
+                                                </div><!-- Input Group -->
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>
+                                                    Date Of Birth
+                                                </label>
+                                                <div class="input-group date DateOfJoinPicker" data-provide="datepicker">
+                                                    <input type="text" name="user[dob]" ng-model="$ctrl.employee.user.dob" class="form-control" placeholder="Select Date" value="{{$ctrl.employee.user.dob}}" />
                                                     <div class="input-group-addon">
                                                         <img class="img-responsive" ng-src="{{theme}}img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                     </div>
