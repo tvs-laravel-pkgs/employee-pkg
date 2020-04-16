@@ -180,6 +180,7 @@ app.component('employeeForm', {
     templateUrl: employee_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope) {
         var self = this;
+        $scope.theme = theme;
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('add-employee') || !self.hasPermission('edit-employee')) {
             window.location = "#!/page-permission-denied";
