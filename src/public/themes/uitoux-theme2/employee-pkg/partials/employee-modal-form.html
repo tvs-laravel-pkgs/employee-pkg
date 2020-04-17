@@ -1,0 +1,254 @@
+<div class="modal fade filter" id="employee-form-modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close">
+                    <i class="glyphicon glyphicon-remove"></i>
+                </button>
+                <h5 class="modal-title" id="myModalLabel">
+                    <% $ctrl.employee.id ? 'Edit' : 'Add' %> Employee
+                    <!-- <% $ctrl.project_version ? '('+$ctrl.project_version.project.short_name+'-'+$ctrl.project_version.number+')' : '' %> -->
+                </h5>
+            </div><!-- Modal Header -->
+            <form id="employee_form">
+                <input type="hidden" name="id" value="<% $ctrl.employee.id %>">
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-text form-group">
+                                    <label>
+                                        Employee Code
+                                        <sup class="mandatory">*</sup>
+                                    </label>
+                                    <input type="text" class="form-control required" ng-model="$ctrl.employee.code" name="code" placeholder="Enter Employee Code" />
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="input-text form-group">
+                                    <label>
+                                        First Name
+                                        <sup class="mandatory">*</sup>
+                                    </label>
+                                    <input type="text" class="form-control" ng-model="$ctrl.employee.user.first_name" name="user[first_name]" placeholder="Enter First Name" />
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="input-text form-group">
+                                    <label>
+                                        Last Name
+                                    </label>
+                                    <input type="text" class="form-control" ng-model="$ctrl.employee.user.last_name" name="user[last_name]" placeholder="Enter Last Name" />
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-sm-6">
+                                <div class="separate-form-group">
+                                    <label>Designation</label>
+                                    <ui-select ng-model="$ctrl.employee.designation_id" theme="select2">
+                                        <ui-select-match placeholder="Select Designation">
+                                            <%$select.selected.name || $select.selected%>
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="i.id as i in $ctrl.designation_list | propsFilter: {name: $select.search}">
+                                            <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                    <input type="hidden" name="designation_id" value=" <% $ctrl.employee.designation_id%>" class="">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                        </div>
+                        <!--row-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-text form-group">
+                                    <label>
+                                        Official Email
+                                    </label>
+                                    <input type="email" class="form-control" ng-model="$ctrl.employee.user.email" name="user[email]" placeholder="Enter Official Email ID" />
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="input-text form-group">
+                                    <label>
+                                        Mobile Number
+                                    </label>
+                                    <input type="text" class="form-control" ng-model="$ctrl.employee.user.mobile_number" name="user[mobile_number]" placeholder="Enter Mobile Number" />
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div>
+                        <!--row-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-text form-group">
+                                    <label>
+                                        Personal Email
+                                    </label>
+                                    <input type="email" class="form-control" ng-model="$ctrl.employee.user.personal_email" name="user[personal_email]" placeholder="Enter Personal Email" />
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="input-text form-group">
+                                    <label>
+                                        Alternate Mobile Number
+                                    </label>
+                                    <input type="text" class="form-control" ng-model="$ctrl.employee.user.alternate_mobile_number" name="user[alternate_mobile_number]" placeholder="Enter Alternate Mobile Number" />
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div>
+                        <!--row-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-text form-group">
+                                    <label>
+                                        GitHub Username
+                                    </label>
+                                    <input type="text" class="form-control" ng-model="$ctrl.employee.github_username" name="github_username" />
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="input-text form-group">
+                                    <label>
+                                        Username
+                                        <sup class="mandatory">*</sup>
+                                    </label>
+                                    <input type="text" class="form-control" ng-model="$ctrl.employee.user.username" name="user[username]" />
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div>
+                        <!--row-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Change Password <sup class="mandatory">*</sup></label>
+                                    <div class="tab-switch">
+                                        <md-switch ng-model="$ctrl.switch_password" aria-label="Switch 2" ng-change="psw_change($ctrl.switch_password)" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
+                                            <% $ctrl.switch_password %>
+                                        </md-switch>
+                                        <input type="hidden" id="password_change" name="password_change" value=" <%$ctrl.switch_password%>" class="required">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" id="hide_password">
+                                <div class="input-text form-group">
+                                    <label>
+                                        Password
+                                        <sup class="mandatory">*</sup>
+                                    </label>
+                                    <input type="password" class="form-control" ng-model="$ctrl.employee.user.password" name="user[password]" id="password" />
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div>
+                        <!--row-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="separate-form-group">
+                                    <label>Role<span class="mandatory">*</span></label>
+                                    <ui-select multiple ng-model="$ctrl.employee.roles" id="secondary" on-remove="$ctrl.removed($item,$model)" theme="bootstrap" close-on-select="false" style="">
+                                        <ui-select-match placeholder="Select Roles">
+                                            <%$item.name%>
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="i.id as i in $ctrl.role_list | propsFilter: {name: $select.search}">
+                                            <div ng-bind-html="i.name | highlight: $select.search"></div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                    <input type="hidden" name="roles" id="roles" value=" <%$ctrl.employee.roles%>" class="required">
+                                </div><!-- Field -->
+                            </div><!-- column -->
+                            <div class="col-md-6">
+                                <div class="profile-upload">
+                                    <!-- <img class="img-responsive" src=" <% URL::asset('public/theme/img/content/profile.jpg') %>" alt="Profile Upload" /> -->
+                                    <div class="avatar-upload">
+                                        <div class="avatar-edit">
+                                            <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" name="attachment" />
+                                            <label for="imageUpload"><i class="ion-md-create"></i></label>
+                                        </div>
+                                        <div class="avatar-preview">
+                                            <div class="avatar-img" id="imagePreview" style="background-image: url('<%$ctrl.user_attchment_url%>/<%$ctrl.employee.user.profile_image.name%>');">
+                                            </div>
+                                        </div>
+                                    </div><!-- Avatar Upload -->
+                                    <p class="img-caption">UPLOAD PICTURE</p>
+                                </div><!-- Profile Upload -->
+                            </div><!-- Column -->
+                        </div>
+                        <!--row-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        Date Of Join
+                                    </label>
+                                    <div class="input-group date DateOfJoinPicker" data-provide="datepicker">
+                                        <input type="text" name="date_of_join" ng-model="$ctrl.employee.date_of_join" class="form-control" placeholder="Select Date" value=" <%$ctrl.employee.date_of_join%>" />
+                                        <div class="input-group-addon">
+                                            <img class="img-responsive" ng-src=" <%theme%>img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                        </div>
+                                    </div><!-- Input Group -->
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        Date Of Birth
+                                    </label>
+                                    <div class="input-group date DateOfJoinPicker" data-provide="datepicker">
+                                        <input type="text" name="user[dob]" ng-model="$ctrl.employee.user.dob" class="form-control" placeholder="Select Date" value=" <%$ctrl.employee.user.dob%>" />
+                                        <div class="input-group-addon">
+                                            <img class="img-responsive" ng-src=" <%theme%>img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                        </div>
+                                    </div><!-- Input Group -->
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div>
+                        <!--row-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Send Invitation<sup class="mandatory">*</sup></label>
+                                    <div class="tab-switch">
+                                        <md-switch ng-model="$ctrl.switch_invitation" aria-label="Switch 2" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
+                                            <% $ctrl.switch_invitation %>
+                                        </md-switch>
+                                        <input type="hidden" id="user[invitation_sent]" name="user[invitation_sent]" value=" <%$ctrl.switch_invitation%>" class="required">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-text form-group">
+                                    <label>
+                                        Slack Api Url
+                                    </label>
+                                    <input type="text" class="form-control" ng-model="$ctrl.employee.user.slack_api_url" name="user[slack_api_url]" />
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div>
+                        <!--row-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-text form-group">
+                                    <label>
+                                        Active Status
+                                        <sup class="mandatory">*</sup>
+                                    </label>
+                                    <div class="tab-switch">
+                                        <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
+                                            <% $ctrl.switch_value %>
+                                        </md-switch>
+                                        <input type="hidden" name="status" value=" <%$ctrl.switch_value%>">
+                                    </div>
+                                </div><!-- Form Group -->
+                            </div><!-- Column -->
+                        </div>
+                        <!--row-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-rose" ng-click="saveEmployee()">
+                                    Submit
+                                </button>
+                            </div>
+                        </div><!-- Row -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+            </form>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->

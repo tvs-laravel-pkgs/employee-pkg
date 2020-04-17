@@ -347,3 +347,221 @@ app.component('employeeForm', {
         });
     }
 });
+app.component('employeeCardList', {
+    templateUrl: employee_card_list_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $route) {
+        $scope.loading = true;
+        var self = this;
+        $scope.theme = theme;
+        console.log(' ======= ');
+        self.hasPermission = HelperService.hasPermission;
+        if (!self.hasPermission('employees')) {
+            window.location = "#!/page-permission-denied";
+            return false;
+        }
+        self.add_permission = self.hasPermission('add-employee');
+        $scope.employee_modal_form_template_url = employee_modal_form_template_url;
+        $http.get(
+            laravel_routes['getEmployees']
+        ).then(function(response) {
+
+            if (!response.data.success) {
+                console(response);
+                showErrorNoty(response.data);
+                return;
+            }
+            console.log(response.data.employees);
+            $scope.employees = response.data.employees;
+        });
+
+        $scope.showEmployeeForm = function(employee) {
+            $('#employee-form-modal').modal('show');
+            $('#employee-name').focus();
+            self.employee = employee;
+            console.log(employee);
+
+
+            $http.get(
+                laravel_routes['getEmployeeFormData'], {
+                    params: {
+                        id: employee ? employee.id : null,
+                    }
+                }
+            ).then(function(response) {
+                console.log('res=====' + response.data.employee);
+                self.employee = response.data.employee;
+                self.designation_list = response.data.designation_list;
+                self.role_list = response.data.role_list;
+                console.log(self.role_list);
+                self.user_attchment_url = user_attchment_url;
+                self.action = response.data.action;
+                $rootScope.loading = false;
+                if (self.action == 'Edit') {
+                    // alert();
+                    if (self.employee.deleted_at) {
+                        self.switch_value = 'Inactive';
+                    } else {
+                        self.switch_value = 'Active';
+                    }
+                    if (self.employee.password_change == 'No') {
+                        self.switch_password = 'No';
+                        $("#hide_password").hide();
+                        $("#password").prop('disabled', true);
+                    } else {
+                        self.switch_password = 'Yes';
+                    }
+                    if (self.employee.user.invitation_sent == 0) {
+                        self.switch_invitation = 'No';
+                    } else {
+                        self.switch_invitation = 'Yes';
+                    }
+
+                    // console.log(response.data.employee_attachment);
+                    // if (response.data.employee_attachment.name != '' && response.data.employee_attachment.name != 'null') {
+                    //     self.employee_attachment_name = response.data.employee_attachment.name;
+                    // } else {
+                    //     self.employee_attachment_name = '';
+                    // }
+                    console.log(response.data.employee);
+
+                } else {
+                    self.switch_value = 'Active';
+                    $("#hide_password").show();
+                    $("#password").prop('disabled', false);
+                    self.switch_password = 'Yes';
+                    self.switch_invitation = 'Yes';
+                    self.employee_attachment_name = '';
+                }
+            });
+        }
+        $scope.psw_change = function(val) {
+            if (val == 'No') {
+                $("#hide_password").hide();
+                $("#password").prop('disabled', true);
+            } else {
+                $("#hide_password").show();
+                /*setTimeout(function() {
+                    $noty.close();
+                }, 1000);*/
+                $("#password").prop('disabled', false);
+            }
+        }
+
+        $('.DateOfJoinPicker').bootstrapDP({
+            format: "dd-mm-yyyy",
+            autoclose: "true",
+            todayHighlight: true,
+            // startDate: min_offset,
+            // endDate: max_offset
+        });
+
+        $.validator.addMethod("roles", function(value, element) {
+            return this.optional(element) || value != '[]';
+        }, " This field is required.");
+
+
+        $("input:text:visible:first").focus();
+
+        $scope.saveEmployee = function() {
+            var form_id = '#employee_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'code': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 64,
+                    },
+                    'user[first_name]': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 64,
+                    },
+                    'user[last_name]': {
+                        minlength: 1,
+                        maxlength: 255,
+                    },
+                    'user[username]': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 32,
+                    },
+                    'alternate_mobile_number': {
+                        number: true,
+                        minlength: 10,
+                        maxlength: 12,
+                    },
+                    'roles': {
+                        roles: true,
+                    },
+                    'user[mobile_number]': {
+                        number: true,
+                        minlength: 10,
+                        maxlength: 12,
+                    },
+                    'user[password]': {
+                        required: function(element) {
+                            if ($("#password_change").val() == 'Yes') {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        },
+                        minlength: 5,
+                        maxlength: 16,
+                    },
+
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('#submit').button('loading');
+                    $.ajax({
+                            url: laravel_routes['saveEmployee'],
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            $('#submit').button('reset');
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('#employee-version-form-modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $route.reload();
+                        })
+                        .fail(function(xhr) {
+                            $('#submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        //DELETE
+        $scope.deleteEmployee = function($id) {
+            $('#employee-delete-modal').modal('show');
+            $('#employee_id').val($id);
+        }
+        $scope.deleteConfirm = function() {
+            $id = $('#employee_id').val();
+            $http.get(
+                laravel_routes['deleteEmployee'], {
+                    params: {
+                        id: $id,
+                    }
+                }
+            ).then(function(response) {
+                if (response.data.success) {
+                    custom_noty('success', 'Employee Deleted Successfully');
+                    $route.reload();
+                    /* $('#employees_list').DataTable().ajax.reload(function(json) {});
+                     $location.path('/employee-pkg/employee/card-list');*/
+                }
+            });
+        }
+    }
+});

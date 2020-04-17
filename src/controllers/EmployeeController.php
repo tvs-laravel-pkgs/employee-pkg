@@ -108,6 +108,7 @@ class EmployeeController extends Controller {
 	}
 
 	public function getEmployeeFormData(Request $request) {
+		//dd($request->all());
 		$id = $request->id;
 		if (!$id) {
 			$employee = new Employee;
@@ -388,5 +389,27 @@ class EmployeeController extends Controller {
 			DB::rollBack();
 			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
 		}
+	}
+	public function getEmployees(Request $request) {
+		//$employee=Employee::find(1);
+		//dd($employee);
+		//dd($request->all());
+		$employees = Employee::withTrashed()
+			->with(['user','designation'])
+			->select(
+				'employees.id',
+				'employees.code',
+				'employees.github_username',
+				'employees.date_of_join',
+				'employees.designation_id',
+				DB::raw('IF(employees.deleted_at IS NULL, "Active","Inactive") as status')
+			)
+			->where('employees.company_id', Auth::user()->company_id)
+			->get();
+		//dd($employees);
+		return response()->json([
+			'success' => true,
+			'employees' => $employees,
+		]);		
 	}
 }

@@ -25,7 +25,7 @@ class Employee extends Model {
 	}
 
 	public function designation() {
-		return $this->belongsTo('App\Designation');
+		return $this->belongsTo('App\Designation','designation_id');
 	}
 
 	public function employeeAttachment() {

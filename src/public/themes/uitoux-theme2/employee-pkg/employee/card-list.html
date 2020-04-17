@@ -4,9 +4,9 @@
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
                     <h1 class="title type-2">
-                        Designations ({{designations.length}})
+                        Employees ({{employees.length}})
                     </h1>
-                    <!-- <p class="subtitle">Masters / JV Masters / Employee Designation Designations</p> -->
+                    <!-- <p class="subtitle">Masters / JV Masters / Employee Employee Employees</p> -->
                 </div><!-- Page Header Content -->
                 <div class="page-header-content button-block">
                     <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#designation-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
@@ -27,7 +27,7 @@
                     </div>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content button-block" ng-show="$ctrl.add_permission">
-                    <a href="javascript:;" class="btn btn-primary my-tooltip" ng-click="showDesignationForm({})" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">Add New</a>
+                    <a href="javascript:;" class="btn btn-primary my-tooltip" ng-click="showEmployeeForm({})" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">Add New</a>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Right -->
         </div><!-- Page Header Inner -->
@@ -35,36 +35,36 @@
     <div class="page-main-content">
         <br />
         <div class="container-fluid" style="overflow-x: scroll;">
-            <div style="width: 5000px;" class="row" dnd-list="$ctrl.designations" dnd-allowed-types="'designation'" dnd-drop="updateModulePriority(item,index)">
-                <div class="col-md-3" style="width: 100%; max-width: 350px; float: left;" dnd-draggable="designation" dnd-effect-allowed="move" dnd-moved="$ctrl.designations.splice(key1, 1)" dnd-type="'designation'" ng-repeat="(key1, designation) in designations">
+            <div style="width: 5000px;" class="row" dnd-list="$ctrl.employees" dnd-allowed-types="'employee'" dnd-drop="updateModulePriority(item,index)">
+                <div class="col-md-3" style="width: 100%; max-width: 350px; float: left;" dnd-draggable="employee" dnd-effect-allowed="move" dnd-moved="$ctrl.employees.splice(key1, 1)" dnd-type="'employee'" ng-repeat="(key1, employee) in employees">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <h3 class="panel-title">
-                                {{designation.name}} ({{designation.short_name}})
+                                {{employee.user.first_name}} ({{employee.code}})
                             </h3>
                             <div>
+                                <span class="label label-success" ng-if="employee.designation.name">
+                                    <md-tooltip md-direction="top">
+                                        Designation
+                                    </md-tooltip>
+                                    {{employee.designation.name}}
+                                </span>
                                 <span class="label label-danger">
                                     <md-tooltip md-direction="top">
                                         Status
                                     </md-tooltip>
-                                    {{designation.status}}
+                                    {{employee.status}}
                                 </span>
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-default" ng-click="showDesignationForm(designation)" title="Edit Designation">
+                                    <button type="button" class="btn btn-sm btn-default" ng-click="showEmployeeForm(employee)" title="Edit Employee">
                                         <md-tooltip md-direction="top">
-                                            Edit Designation
+                                            Edit Employee
                                         </md-tooltip>
                                         <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-default" ng-click="$ctrl.module=module;showTaskForm({},0,$event)" title="Add Employee">
+                                    <button type="button" class="btn btn-sm btn-default" ng-click="deleteEmployee(employee.id,$event)">
                                         <md-tooltip md-direction="top">
-                                            Add Employee to {{designation.name}} Designation
-                                        </md-tooltip>
-                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-default" ng-click="deleteDesignation(designation.id,$event)">
-                                        <md-tooltip md-direction="top">
-                                            Delete Designation
+                                            Delete Employee
                                         </md-tooltip>
                                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                     </button>
@@ -72,44 +72,59 @@
                             </div>
                         </div>
                         <div class="panel-body">
-                            <div class="panel panel-default" ng-repeat="(key, employee) in designation.employees">
-                                <div class="panel-heading">
+                            <div class="panel panel-default">
+                                <!-- <div class="panel-heading">
                                     {{employee.user.first_name}} {{employee.user.last_name}}
-                                </div>
+                                </div> -->
                                 <div class="panel-body">
                                     <span class="label label-default">
+                                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
                                         <md-tooltip md-direction="top">
-                                            Employee code
+                                            Employee Email
                                         </md-tooltip>
-                                        {{employee.code}}
-                                    </span>
-                                    <span class="label label-primary" ng-if="employee.github_username">
-                                        {{employee.github_username}}
-                                    </span>
-                                    <span class="label label-default">
-                                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
                                         {{employee.user.email}}
-                                    </span>
-                                    <span class="label label-success" ng-if="employee.personal_email">
-                                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
-                                        {{employee.user.personal_email}}
-                                    </span>
-                                    <span class="label label-danger">
-                                        {{employee.user.username}}
                                     </span>
                                     <span class="label label-primary">
                                         <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
+                                        <md-tooltip md-direction="top">
+                                            Employee Mobile
+                                        </md-tooltip>
                                         {{employee.user.mobile_number}}
                                     </span>
-                                    <span class="label label-info" ng-if="employee.alternate_mobile_number">
+                                    <span class="label label-default" ng-if="employee.github_username">
+                                        <md-tooltip md-direction="top">
+                                            Employee Github Username
+                                        </md-tooltip>
+                                        {{employee.github_username}}
+                                    </span>
+                                    <span class="label label-success" ng-if="employee.user.personal_email">
+                                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+                                        <md-tooltip md-direction="top">
+                                            Employee Personal Email
+                                        </md-tooltip>
+                                        {{employee.user.personal_email}}
+                                    </span>
+                                    <span class="label label-danger">
+                                        <md-tooltip md-direction="top">
+                                            Employee Username
+                                        </md-tooltip>
+                                        {{employee.user.username}}
+                                    </span>
+                                    <span class="label label-info" ng-if="employee.user.alternate_mobile_number">
                                         <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
+                                        <md-tooltip md-direction="top">
+                                            Employee Alternate Mobile
+                                        </md-tooltip>
                                         {{employee.user.alternate_mobile_number}}
                                     </span>
                                     <span class="label label-warning" ng-if="employee.date_of_join">
+                                        <md-tooltip md-direction="top">
+                                            Employee Date Of Join
+                                        </md-tooltip>
                                         {{employee.date_of_join}}
                                     </span>
                                 </div>
-                                <div class="panel-footer"> </div>
+                                <!-- <div class="panel-footer"> </div> -->
                             </div>
                             <div ng-if="designation.employees.length==0">
                                 No employees found
@@ -165,7 +180,7 @@
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
 <!-- Modal -->
-<div class="modal fade alert-modal failure" id="designation-delete-modal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade alert-modal failure" id="employee-delete-modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -174,7 +189,7 @@
             <div class="modal-body">
                 <h5>Delete</h5>
                 <p>You can’t retrive the data again, Are you sure you want to delete? </p>
-                <input type="hidden" name="designation_id" id="designation_id" value="">
+                <input type="hidden" name="employee_id" id="employee_id" value="">
                 <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
                 <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
             </div>
@@ -182,4 +197,4 @@
     </div>
 </div>
 <!-- Modal -->
-<ng-include src="designation_modal_form_template_url" ng-init="designation = $ctrl.designation"></ng-include>
+<ng-include src="employee_modal_form_template_url" ng-init="employee = $ctrl.employee"></ng-include>
