@@ -21,7 +21,7 @@
                                         Employee Code
                                         <sup class="mandatory">*</sup>
                                     </label>
-                                    <input type="text" class="form-control required" ng-model="$ctrl.employee.code" name="code" placeholder="Enter Employee Code" />
+                                    <input type="text" class="form-control required" ng-model="$ctrl.employee.code" name="code" placeholder="Enter Employee Code" id="code" />
                                 </div><!-- Feild -->
                             </div><!-- Column -->
                             <div class="col-md-6">
@@ -123,7 +123,7 @@
                                         <md-switch ng-model="$ctrl.switch_password" aria-label="Switch 2" ng-change="psw_change($ctrl.switch_password)" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
                                             <% $ctrl.switch_password %>
                                         </md-switch>
-                                        <input type="hidden" id="password_change" name="password_change" value=" <%$ctrl.switch_password%>" class="required">
+                                        <input type="hidden" id="password_change" name="password_change" value="<%$ctrl.switch_password%>" class="required">
                                     </div>
                                 </div>
                             </div>
@@ -133,7 +133,7 @@
                                         Password
                                         <sup class="mandatory">*</sup>
                                     </label>
-                                    <input type="password" class="form-control" ng-model="$ctrl.employee.user.password" name="user[password]" id="password" />
+                                    <input type="password" class="form-control required" ng-model="$ctrl.employee.user.password" name="user[password]" id="password" />
                                 </div><!-- Feild -->
                             </div><!-- Column -->
                         </div>
@@ -150,7 +150,7 @@
                                             <div ng-bind-html="i.name | highlight: $select.search"></div>
                                         </ui-select-choices>
                                     </ui-select>
-                                    <input type="hidden" name="roles" id="roles" value=" <%$ctrl.employee.roles%>" class="required">
+                                    <input type="hidden" name="roles" id="roles" value="<%$ctrl.employee.roles%>" class="required">
                                 </div><!-- Field -->
                             </div><!-- column -->
                             <div class="col-md-6">

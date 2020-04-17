@@ -376,10 +376,9 @@ app.component('employeeCardList', {
 
         $scope.showEmployeeForm = function(employee) {
             $('#employee-form-modal').modal('show');
-            $('#employee-name').focus();
+            $('#code').focus();
             self.employee = employee;
             console.log(employee);
-
 
             $http.get(
                 laravel_routes['getEmployeeFormData'], {
@@ -460,11 +459,11 @@ app.component('employeeCardList', {
         }, " This field is required.");
 
 
-        $("input:text:visible:first").focus();
+        $('#code').focus();
 
         $scope.saveEmployee = function() {
-            var form_id = '#employee_form';
-            var v = jQuery(form_id).validate({
+            var employee_form = '#employee_form';
+            var v = jQuery(employee_form).validate({
                 ignore: '',
                 rules: {
                     'code': {
@@ -502,6 +501,7 @@ app.component('employeeCardList', {
                     'user[password]': {
                         required: function(element) {
                             if ($("#password_change").val() == 'Yes') {
+                                alert();
                                 return true;
                             } else {
                                 return false;
@@ -513,7 +513,7 @@ app.component('employeeCardList', {
 
                 },
                 submitHandler: function(form) {
-                    let formData = new FormData($(form_id)[0]);
+                    let formData = new FormData($(employee_form)[0]);
                     $('#submit').button('loading');
                     $.ajax({
                             url: laravel_routes['saveEmployee'],
