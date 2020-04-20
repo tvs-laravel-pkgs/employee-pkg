@@ -444,7 +444,7 @@ app.component('employeeCardList', {
                 if (response.data.success) {
                     custom_noty('success', 'User Invite Sent Successfully..');
                 } else {
-                    showErrorNoty(response);
+                    showErrorNoty(response.data.errors);
                     return;
                 }
 

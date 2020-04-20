@@ -344,6 +344,15 @@ class EmployeeController extends Controller {
 	public function sendUserInvitationMail($id) {
 		//dd($id);
 		$user = User::find($id);
+		if (!$user) {
+			return response()->json([
+				'success' => false,
+				'message' => 'Validation error',
+				'errors' => [
+					"User not found",
+				],
+			]);
+		}
 		if ($user->email) {
 			$arr['user_id'] = $user->id;
 			$arr['user_name'] = $user->username;
