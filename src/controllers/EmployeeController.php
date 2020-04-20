@@ -3,20 +3,19 @@
 namespace Abs\EmployeePkg;
 use Abs\EmployeePkg\Designation;
 use Abs\UserPkg\Mail\UserInvitationMail;
-use App\Role;
-use App\ActivityLog;
-use App\Employee;
 use App\Attachment;
+use App\Employee;
 use App\Http\Controllers\Controller;
+use App\Role;
 use App\User;
 use Auth;
 use Carbon\Carbon;
 use DB;
 use Entrust;
 use File;
-use Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Mail;
 use Validator;
 use Yajra\Datatables\Datatables;
 
@@ -131,7 +130,7 @@ class EmployeeController extends Controller {
 		}
 		$this->data['success'] = true;
 		$this->data['employee'] = $employee;
-		$this->data['designation_list'] =collect(Designation::select('name', 'id')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Designation']);
+		$this->data['designation_list'] = collect(Designation::select('name', 'id')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Designation']);
 		$this->data['role_list'] = collect(Role::getList());
 
 		$this->data['action'] = $action;
@@ -260,11 +259,11 @@ class EmployeeController extends Controller {
 				$employee->deleted_at = NULL;
 			}
 			$employee->save();
-			if ($request->user['invitation_sent'] == 'No') {
-				$user->invitation_sent=0;
+			/*if ($request->user['invitation_sent'] == 'No') {
+			$user->invitation_sent = 0;
 			} else {
-				$user->invitation_sent=1;
-			}
+			$user->invitation_sent = 1;
+			}*/
 			//dd($request->user['invitation_sent']);
 			$user->fill($request->user);
 			$user->has_mobile_login = 0;
@@ -306,17 +305,9 @@ class EmployeeController extends Controller {
 				$user->save();
 
 			}
-			if($user->invitation_sent==1){//TO SEND USER INVIATATION
-				if($user->email){
-					$mail = $this->send_invitation_mail($user);
-				}
-				if(!empty($user->slack_api_url)){
-					$data['subject'] = 'User Invitation Sent';
-					$data['send_to'] = $user->slack_api_url;
-					$data['action_from'] = "UserInvite";
-					$data['url'] = url('/login');
-					$user->notify(new \App\Notifications\Slack($data));
-				}
+			if ($request->user['invitation_sent'] == 'Yes') {
+				//TO SEND USER INVIATATION
+				$mail = $this->sendUserInvitationMail($user->id);
 			}
 
 			// $activity = new ActivityLog;
@@ -350,14 +341,26 @@ class EmployeeController extends Controller {
 			]);
 		}
 	}
-	function send_invitation_mail($user) {
-		$arr['user_id'] = $user->id;
-		$arr['user_name'] = $user->username;
-		$arr['subject'] = 'User invitation mail for PMS web portal';
-		$arr['to_email'] = $user->email;
-		//dd($arr);
-		$MailInstance = new UserInvitationMail($arr);
-		return Mail::send($MailInstance);
+	public function sendUserInvitationMail($id) {
+		//dd($id);
+		$user = User::find($id);
+		if ($user->email) {
+			$arr['user_id'] = $user->id;
+			$arr['user_name'] = $user->username;
+			$arr['subject'] = 'User invitation mail for PMS web portal';
+			$arr['to_email'] = $user->email;
+			//dd($arr);
+			$MailInstance = new UserInvitationMail($arr);
+			$mail = Mail::send($MailInstance);
+		}
+		if (!empty($user->slack_api_url)) {
+			$data['subject'] = 'User Invitation Sent';
+			$data['send_to'] = $user->slack_api_url;
+			$data['action_from'] = "UserInvite";
+			$data['url'] = url('/login');
+			$user->notify(new \App\Notifications\Slack($data));
+		}
+		return response()->json(['success' => true]);
 	}
 
 	public function deleteEmployee(Request $request) {
@@ -372,15 +375,15 @@ class EmployeeController extends Controller {
 					->forceDelete();
 				$employee = Employee::withTrashed()->where('id', $request->id)->forceDelete();
 				/*$activity = new ActivityLog;
-					$activity->date_time = Carbon::now();
-					$activity->user_id = Auth::user()->id;
-					$activity->module = 'Employees';
-					$activity->entity_id = $request->id;
-					$activity->entity_type_id = 1420;
-					$activity->activity_id = 282;
-					$activity->activity = 282;
-					$activity->details = json_encode($activity);
-				*/
+				$activity->date_time = Carbon::now();
+				$activity->user_id = Auth::user()->id;
+				$activity->module = 'Employees';
+				$activity->entity_id = $request->id;
+				$activity->entity_type_id = 1420;
+				$activity->activity_id = 282;
+				$activity->activity = 282;
+				$activity->details = json_encode($activity);
+				 */
 
 				DB::commit();
 				return response()->json(['success' => true, 'message' => 'Employee Deleted Successfully']);
@@ -395,7 +398,7 @@ class EmployeeController extends Controller {
 		//dd($employee);
 		//dd($request->all());
 		$employees = Employee::withTrashed()
-			->with(['user','designation'])
+			->with(['user', 'designation'])
 			->select(
 				'employees.id',
 				'employees.code',
@@ -410,6 +413,6 @@ class EmployeeController extends Controller {
 		return response()->json([
 			'success' => true,
 			'employees' => $employees,
-		]);		
+		]);
 	}
 }

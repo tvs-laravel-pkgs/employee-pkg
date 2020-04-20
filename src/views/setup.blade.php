@@ -49,6 +49,7 @@
     var employee_list_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/employee/list.html')}}";
     var employee_form_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/employee/form.html')}}";
     var user_attchment_url = "{{asset('/storage/app/public/user-profile-images')}}";
+ 	var user_invite_url = "{{url('employee-pkg/employee/user-invitation-send')}}";
 
     var employee_card_list_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/employee/card-list.html')}}";
     var employee_modal_form_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/partials/employee-modal-form.html')}}";

@@ -373,7 +373,6 @@ app.component('employeeCardList', {
             console.log(response.data.employees);
             $scope.employees = response.data.employees;
         });
-
         $scope.showEmployeeForm = function(employee) {
             $('#employee-form-modal').modal('show');
             $('#code').focus();
@@ -381,6 +380,7 @@ app.component('employeeCardList', {
             console.log(employee);
 
             $http.get(
+
                 laravel_routes['getEmployeeFormData'], {
                     params: {
                         id: employee ? employee.id : null,
@@ -409,12 +409,12 @@ app.component('employeeCardList', {
                     } else {
                         self.switch_password = 'Yes';
                     }
-                    if (self.employee.user.invitation_sent == 0) {
+                    /*if (self.employee.user.invitation_sent == 0) {
                         self.switch_invitation = 'No';
                     } else {
-                        self.switch_invitation = 'Yes';
-                    }
-
+                        self.switch_invitation = 'No';
+                    }*/
+                    self.switch_invitation = 'No';
                     // console.log(response.data.employee_attachment);
                     // if (response.data.employee_attachment.name != '' && response.data.employee_attachment.name != 'null') {
                     //     self.employee_attachment_name = response.data.employee_attachment.name;
@@ -428,9 +428,26 @@ app.component('employeeCardList', {
                     $("#hide_password").show();
                     $("#password").prop('disabled', false);
                     self.switch_password = 'Yes';
-                    self.switch_invitation = 'Yes';
+                    self.switch_invitation = 'No';
                     self.employee_attachment_name = '';
                 }
+            });
+        }
+
+        $scope.sendEmpInvite = function(user) {
+            // console.log(user);
+            //console.log(user_invite_url);
+            $http.get(
+                user_invite_url + '/' + user.id,
+            ).then(function(response) {
+                console.log(response.data.success);
+                if (response.data.success) {
+                    custom_noty('success', 'User Invite Sent Successfully..');
+                } else {
+                    showErrorNoty(response);
+                    return;
+                }
+
             });
         }
         $scope.psw_change = function(val) {
