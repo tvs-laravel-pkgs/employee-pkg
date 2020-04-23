@@ -408,15 +408,18 @@ class EmployeeController extends Controller {
 		//dd($request->all());
 		$employees = Employee::withTrashed()
 			->with(['user', 'designation'])
-			->select(
+			->select([
 				'employees.id',
 				'employees.code',
 				'employees.github_username',
 				'employees.date_of_join',
 				'employees.designation_id',
 				DB::raw('IF(employees.deleted_at IS NULL, "Active","Inactive") as status')
-			)
+			])
+			->join('users','users.entity_id','employees.id')
+			->where('users.user_type_id', 1)
 			->where('employees.company_id', Auth::user()->company_id)
+			->orderBy('users.first_name')
 			->get();
 		//dd($employees);
 		return response()->json([

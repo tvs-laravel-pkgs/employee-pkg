@@ -396,7 +396,6 @@ app.component('employeeCardList', {
                 self.action = response.data.action;
                 $rootScope.loading = false;
                 if (self.action == 'Edit') {
-                    // alert();
                     if (self.employee.deleted_at) {
                         self.switch_value = 'Inactive';
                     } else {
@@ -518,7 +517,6 @@ app.component('employeeCardList', {
                     'user[password]': {
                         required: function(element) {
                             if ($("#password_change").val() == 'Yes') {
-                                alert();
                                 return true;
                             } else {
                                 return false;
@@ -545,6 +543,7 @@ app.component('employeeCardList', {
                                 showErrorNoty(res);
                                 return;
                             }
+                            //custom_noty('sucess', 'Employee saved sucessfully');
                             $('#employee-version-form-modal').modal('hide');
                             $('body').removeClass('modal-open');
                             $('.modal-backdrop').remove();
