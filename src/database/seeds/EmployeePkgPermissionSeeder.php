@@ -64,6 +64,14 @@ class EmployeePkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
+			//Mobile Attendance
+			[
+				'display_order' => 99,
+				'parent' => 'mobile-permissions',
+				'name' => 'mobile-attendance',
+				'display_name' => 'Attendance',
+			],
+
 		];
 		Permission::createFromArrays($permissions);
 	}

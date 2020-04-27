@@ -20,6 +20,7 @@ class EmployeesC extends Migration {
 				$table->string('github_username', 64)->nullable();
 				$table->string('personal_email', 64)->nullable();
 				$table->string('alternate_mobile_number', 10)->nullable();
+				$table->date('date_of_join')->nullable();
 				$table->timestamps();
 				$table->softDeletes();
 

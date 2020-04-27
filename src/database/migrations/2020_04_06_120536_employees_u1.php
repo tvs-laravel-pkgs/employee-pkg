@@ -12,7 +12,7 @@ class EmployeesU1 extends Migration {
 	 */
 	public function up() {
 		Schema::table('employees', function (Blueprint $table) {
-			$table->date('date_of_join')->nullable()->after('alternate_mobile_number');
+			// $table->date('date_of_join')->nullable()->after('alternate_mobile_number');
 
 		});
 	}
@@ -24,7 +24,7 @@ class EmployeesU1 extends Migration {
 	 */
 	public function down() {
 		Schema::table('employees', function (Blueprint $table) {
-			$table->dropColumn('date_of_join');
+			// $table->dropColumn('date_of_join');
 		});
 	}
 }
