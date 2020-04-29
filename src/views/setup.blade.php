@@ -41,8 +41,20 @@
 	    when('/employee-pkg/designation/card-view', {
 	        template: '<designation-card-view></designation-card-view>',
 	        title: 'Designations Card View',
+	    }).
+	    //SKILL LEVELS
+	    when('/employee-pkg/skill-level/list', {
+	        template: '<skill-level-list></skill-level-list>',
+	        title: 'Skill Levels',
+	    }).
+	    when('/employee-pkg/skill-level/add', {
+	        template: '<skill-level-form></skill-level-form>',
+	        title: 'Add Skill Level',
+	    }).
+	    when('/employee-pkg/skill-level/edit/:id', {
+	        template: '<skill-level-form></skill-level-form>',
+	        title: 'Edit Skill Level',
 	    });
-
 	}]);
 
 	//EMPLOYEES
@@ -60,6 +72,11 @@
     var designation_card_view_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/designation/card-view.html')}}";
     var designation_modal_form_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/partials/designation-modal-form.html')}}";
 
+    //SKILL LEVELS
+    var skill_level_list_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/skill-level/list.html')}}";
+    var skill_level_form_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/skill-level/form.html')}}";
+
 </script>
 <script type="text/javascript" src="{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/employee/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/designation/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/skill-level/controller.js')}}"></script>

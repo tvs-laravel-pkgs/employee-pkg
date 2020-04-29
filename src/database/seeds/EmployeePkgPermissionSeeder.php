@@ -64,6 +64,32 @@ class EmployeePkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
+			//Skill Levels
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'skill-levels',
+				'display_name' => 'Skill Levels',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'skill-levels',
+				'name' => 'add-skill-level',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'skill-levels',
+				'name' => 'edit-skill-level',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'skill-levels',
+				'name' => 'delete-skill-level',
+				'display_name' => 'Delete',
+			],
+
 			//Mobile Attendance
 			[
 				'display_order' => 99,
