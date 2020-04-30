@@ -64,6 +64,32 @@ class EmployeePkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
+			//Punch Out Methods
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'punch-out-methods',
+				'display_name' => 'Punch Out Methods',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'punch-out-methods',
+				'name' => 'add-punch-out-method',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'punch-out-methods',
+				'name' => 'edit-punch-out-methodn',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'punch-out-methods',
+				'name' => 'delete-punch-out-method',
+				'display_name' => 'Delete',
+			],
+
 			//Skill Levels
 			[
 				'display_order' => 99,
