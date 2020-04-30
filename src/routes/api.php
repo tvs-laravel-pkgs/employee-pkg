@@ -1,8 +1,7 @@
 <?php
-Route::group(['namespace' => 'Abs\EmployeePkg\Api', 'middleware' => ['api']], function () {
-	Route::group(['prefix' => 'employee-pkg/api'], function () {
-		Route::group(['middleware' => ['auth:api']], function () {
-			// Route::get('taxes/get', 'TaxController@getTaxes');
-		});
+Route::group(['namespace' => 'Abs\EmployeePkg\Api', 'middleware' => ['api', 'auth:api']], function () {
+	Route::group(['prefix' => 'api/employee-pkg'], function () {
+		Route::post('punch', 'PunchController@punch')->middleware('auth:api');
+		Route::post('punch/status', 'PunchController@status');
 	});
 });
