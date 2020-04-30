@@ -16,9 +16,11 @@ Route::group(['namespace' => 'Abs\EmployeePkg', 'middleware' => ['web', 'auth'],
 	Route::post('/designation/save', 'DesignationController@saveDesignation')->name('saveDesignation');
 	Route::get('/designation/delete', 'DesignationController@deleteDesignation')->name('deleteDesignation');
 	Route::get('/designation/card-view', 'DesignationController@getDesignations')->name('getDesignations');
-	//SKILL LEVELS
+	//SKILL LEVELS 
 	Route::get('/skill-level/get-list', 'SkillLevelController@getSkillLevelList')->name('getSkillLevelList');
 	Route::get('/skill-level/get-form-data', 'SkillLevelController@getSkillLevelFormData')->name('getSkillLevelFormData');
 	Route::post('/skill-level/save', 'SkillLevelController@saveSkillLevel')->name('saveSkillLevel');
 	Route::get('/skill-level/delete', 'SkillLevelController@deleteSkillLevel')->name('deleteSkillLevel');
+	Route::get('/skill-level/get-filter-data', 'SkillLevelController@getSkillLevelFilter')->name('getSkillLevelFilter');
+
 });
