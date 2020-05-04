@@ -12,9 +12,9 @@ class AlterEmployeeU1 extends Migration {
 	 */
 	public function up() {
 		Schema::table('employees', function (Blueprint $table) {
-			$table->dropUnique('employees_company_id_personal_email_unique');
-			$table->dropColumn('personal_email');
-			$table->dropColumn('alternate_mobile_number');
+			// $table->dropUnique('employees_company_id_personal_email_unique');
+			// $table->dropColumn('personal_email');
+			// $table->dropColumn('alternate_mobile_number');
 		});
 	}
 
@@ -25,9 +25,9 @@ class AlterEmployeeU1 extends Migration {
 	 */
 	public function down() {
 		Schema::table('employees', function (Blueprint $table) {
-			$table->string('personal_email', 64)->nullable()->after('github_username');
-			$table->string('alternate_mobile_number', 10)->nullable()->after('personal_email');
-			$table->unique(['company_id', 'personal_email']);
+			// $table->string('personal_email', 64)->nullable()->after('github_username');
+			// $table->string('alternate_mobile_number', 10)->nullable()->after('personal_email');
+			// $table->unique(['company_id', 'personal_email']);
 		});
 	}
 }
