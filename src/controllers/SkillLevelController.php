@@ -69,28 +69,18 @@ class SkillLevelController extends Controller
 				return '<span class="status-indigator ' . $status . '"></span>' . $skill_level->status;
 			})
 			->addColumn('action', function ($skill_level) {
-				// $img_edit = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
-				// $img_edit_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
-				// $img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
-				// $img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
-				// $output = '';
+				$img_edit = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
+				$img_edit_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
+				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
+				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$action = '';
-				$img1 = asset('public/theme/img/table/edit.svg');
-				$img1_active = asset('public/theme/img/table/edit-hover.svg');
-				$img2 = asset('public/theme/img/table/view.svg');
-				$img2_active = asset('public/theme/img/table/view-hover.svg');
-				$img3 = asset('public/theme/img/table/delete.svg');
-				$img3_active = asset('public/theme/img/table/delete-hover.svg');
 				
 				if (Entrust::can('edit-skill-level')) {
-					// $output .= '<a href="#!/employee-pkg/skill-level/edit/' . $skill_level->id . '" id = "" title="Edit"><img src="' . $img_edit . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img_edit_active . '" onmouseout=this.src="' . $img_edit . '"></a>';
-					$action .= '<a href="#!/employee-pkg/skill-level/edit/' . $skill_level->id . '" class=""><img class="img-responsive" src="' . url($img1) . '" onmouseover=this.src="' . $img1_active . '" onmouseout=this.src="' . $img1 . '" class="action"</i></a>';
+					$action .= '<a href="#!/employee-pkg/skill-level/edit/' . $skill_level->id . '" id = "" title="Edit"><img src="' . $img_edit . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img_edit_active . '" onmouseout=this.src="' . $img_edit . '"></a>';
 				}
 				if (Entrust::can('delete-skill-level')) {
-					// $output .= '<a href="javascript:;" data-toggle="modal" data-target="#delete_skill_level" onclick="angular.element(this).scope().deleteSkillLevel(' . $skill_level->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete_active . '" onmouseout=this.src="' . $img_delete . '"></a>';
-					$action .= '<a href="javascript:;" data-toggle="modal" data-target="#delete_skill_level" onclick="angular.element(this).scope().deleteSkillLevel(' . $skill_level->id . ')" dusk = "delete-btn" title="Delete"> <img src="' . $img3 . '" alt="delete" class="img-responsive" onmouseover="this.src="' . $img3_active . '" onmouseout="this.src="' . $img3 . '" > </a>';
+					$action .= '<a href="javascript:;" data-toggle="modal" data-target="#delete_skill_level" onclick="angular.element(this).scope().deleteSkillLevel(' . $skill_level->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete_active . '" onmouseout=this.src="' . $img_delete . '"></a>';
 				}
-				// return $output;
 				return $action;
 			})
 			->make(true);
