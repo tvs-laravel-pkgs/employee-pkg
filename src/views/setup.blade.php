@@ -25,6 +25,7 @@
 	        template: '<employee-card-list></employee-card-list>',
 	        title: 'Employees Card List',
 	    }).
+
 	    //DESIGNATION
 	    when('/employee-pkg/designation/list', {
 	        template: '<designation-list></designation-list>',
@@ -42,6 +43,7 @@
 	        template: '<designation-card-view></designation-card-view>',
 	        title: 'Designations Card View',
 	    }).
+
 	    //SKILL LEVELS
 	    when('/employee-pkg/skill-level/list', {
 	        template: '<skill-level-list></skill-level-list>',
