@@ -128,16 +128,22 @@ app.component('skillLevelList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
+        // $('#short_name').on('keyup', function() {
+        //     dataTables.fnFilter();
+        // });
+        // $('#name').on('keyup', function() {
+        //     dataTables.fnFilter();
+        // });
+        // $scope.onSelectedStatus = function(id) {
+        //     $('#status').val(id);
+        //     dataTables.fnFilter();
+        // }
+        $scope.applyFilter = function() {
+            $('#status').val(self.status);
             dataTables.fnFilter();
-        });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
-            dataTables.fnFilter();
+            $('#skill-level-filter-modal').modal('hide');
         }
+
         $scope.reset_filter = function() {
             $("#short_name").val('');
             $("#name").val('');
