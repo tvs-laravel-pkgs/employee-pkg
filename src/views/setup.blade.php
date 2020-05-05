@@ -56,6 +56,20 @@
 	    when('/employee-pkg/skill-level/edit/:id', {
 	        template: '<skill-level-form></skill-level-form>',
 	        title: 'Edit Skill Level',
+	    }).
+
+	    //PUNCH OUT METHODS
+	    when('/employee-pkg/punch-out-method/list', {
+	        template: '<punch-out-method-list></punch-out-method-list>',
+	        title: 'Punch Out Methods',
+	    }).
+	    when('/employee-pkg/punch-out-method/add', {
+	        template: '<punch-out-method-form></punch-out-method-form>',
+	        title: 'Add Punch Out Method',
+	    }).
+	    when('/employee-pkg/punch-out-method/edit/:id', {
+	        template: '<punch-out-method-form></punch-out-method-form>',
+	        title: 'Edit Punch Out Method',
 	    });
 	}]);
 
@@ -78,7 +92,12 @@
     var skill_level_list_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/skill-level/list.html')}}";
     var skill_level_form_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/skill-level/form.html')}}";
 
+    //PUNCH OUT METHODS
+    var punch_out_method_list_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/punch-out-method/list.html')}}";
+    var punch_out_method_form_template_url = "{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/punch-out-method/form.html')}}";
+
 </script>
 <script type="text/javascript" src="{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/employee/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/designation/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/skill-level/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($employee_pkg_prefix.'/public/themes/'.$theme.'/employee-pkg/punch-out-method/controller.js')}}"></script>

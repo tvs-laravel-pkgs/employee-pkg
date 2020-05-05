@@ -8,7 +8,7 @@ app.component('skillLevelList', {
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('skill-levels')) {
-            window.location = "#!/page-permission-denied";
+            window.location = "#!/permission-denied";
             return false;
         }
         self.add_permission = self.hasPermission('add-skill-level');
@@ -162,8 +162,8 @@ app.component('skillLevelForm', {
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-skill-level') || !self.hasPermission('edit-skill-level')) {
-            window.location = "#!/page-permission-denied";
+        if (!self.hasPermission('add-skill-level') && !self.hasPermission('edit-skill-level')) {
+            window.location = "#!/permission-denied";
             return false;
         }
         self.angular_routes = angular_routes;
@@ -204,7 +204,7 @@ app.component('skillLevelForm', {
                     maxlength: 128,
                 },
                 'description': {
-                    minlength: 3,
+                    // minlength: 3,
                     maxlength: 255,
                 }
             },
@@ -218,7 +218,7 @@ app.component('skillLevelForm', {
                     maxlength: 'Maximum 128 Characters',
                 },
                 'description': {
-                    minlength: 'Minimum 3 Characters',
+                    // minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 255 Characters',
                 }
             },

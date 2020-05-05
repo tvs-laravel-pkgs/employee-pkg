@@ -18,13 +18,23 @@ class PunchOutMethodController extends Controller {
 		$this->data['theme'] = config('custom.theme');
 	}
 
+	public function getPunchOutMethodFilter() {
+		$this->data['extras'] = [
+			'status' => [
+				['id' => '', 'name' => 'Select Status'],
+				['id' => '1', 'name' => 'Active'],
+				['id' => '0', 'name' => 'Inactive'],
+			],
+		];
+		return response()->json($this->data);
+	}
+
 	public function getPunchOutMethodList(Request $request) {
 		$punch_out_methods = PunchOutMethod::withTrashed()
 
 			->select([
 				'punch_out_methods.id',
 				'punch_out_methods.name',
-				'punch_out_methods.short_name',
 
 				DB::raw('IF(punch_out_methods.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
@@ -45,24 +55,25 @@ class PunchOutMethodController extends Controller {
 		;
 
 		return Datatables::of($punch_out_methods)
-			->rawColumns(['name', 'action'])
-			->addColumn('name', function ($punch_out_method) {
+			// ->rawColumns(['name', 'action'])
+			->addColumn('status', function ($punch_out_method) {
 				$status = $punch_out_method->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $punch_out_method->name;
+				return '<span class="status-indicator ' . $status . '"></span>' . $punch_out_method->status;
 			})
 			->addColumn('action', function ($punch_out_method) {
-				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
-				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
+				$img_edit = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
+				$img_edit_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
-				$output = '';
-				if (Entrust::can('edit-punch_out_method')) {
-					$output .= '<a href="#!/employee-pkg/punch_out_method/edit/' . $punch_out_method->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				$action = '';
+				
+				if (Entrust::can('edit-punch-out-method')) {
+					$action .= '<a href="#!/employee-pkg/punch-out-method/edit/' . $punch_out_method->id . '" id = "" title="Edit"><img src="' . $img_edit . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img_edit_active . '" onmouseout=this.src="' . $img_edit . '"></a>';
 				}
-				if (Entrust::can('delete-punch_out_method')) {
-					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#punch_out_method-delete-modal" onclick="angular.element(this).scope().deletePunchOutMethod(' . $punch_out_method->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
+				if (Entrust::can('delete-punch-out-method')) {
+					$action .= '<a href="javascript:;" data-toggle="modal" data-target="#delete_punch_out_method" onclick="angular.element(this).scope().deletePunchOutMethod(' . $punch_out_method->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete_active . '" onmouseout=this.src="' . $img_delete . '"></a>';
 				}
-				return $output;
+				return $action;
 			})
 			->make(true);
 	}
@@ -86,26 +97,16 @@ class PunchOutMethodController extends Controller {
 		// dd($request->all());
 		try {
 			$error_messages = [
-				'short_name.required' => 'Short Name is Required',
-				'short_name.unique' => 'Short Name is already taken',
-				'short_name.min' => 'Short Name is Minimum 3 Charachers',
-				'short_name.max' => 'Short Name is Maximum 32 Charachers',
 				'name.required' => 'Name is Required',
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
-				'name.max' => 'Name is Maximum 191 Charachers',
+				'name.max' => 'Name is Maximum 64 Charachers',
 			];
 			$validator = Validator::make($request->all(), [
-				'short_name' => [
-					'required:true',
-					'min:3',
-					'max:32',
-					'unique:punch_out_methods,short_name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
-				],
 				'name' => [
 					'required:true',
 					'min:3',
-					'max:191',
+					'max:64',
 					'unique:punch_out_methods,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 			], $error_messages);
@@ -132,12 +133,12 @@ class PunchOutMethodController extends Controller {
 			if (!($request->id)) {
 				return response()->json([
 					'success' => true,
-					'message' => 'PunchOutMethod Added Successfully',
+					'message' => 'Punch Out Method Added Successfully',
 				]);
 			} else {
 				return response()->json([
 					'success' => true,
-					'message' => 'PunchOutMethod Updated Successfully',
+					'message' => 'Punch Out Method Updated Successfully',
 				]);
 			}
 		} catch (Exceprion $e) {
@@ -156,7 +157,7 @@ class PunchOutMethodController extends Controller {
 			$punch_out_method = PunchOutMethod::withTrashed()->where('id', $request->id)->forceDelete();
 			if ($punch_out_method) {
 				DB::commit();
-				return response()->json(['success' => true, 'message' => 'PunchOutMethod Deleted Successfully']);
+				return response()->json(['success' => true, 'message' => 'Punch Out Method Deleted Successfully']);
 			}
 		} catch (Exception $e) {
 			DB::rollBack();
@@ -164,24 +165,23 @@ class PunchOutMethodController extends Controller {
 		}
 	}
 
-	public function getPunchOutMethods(Request $request) {
-		$punch_out_methods = PunchOutMethod::withTrashed()
-			->with([
-				'employees',
-				'employees.user',
-			])
-			->select([
-				'punch_out_methods.id',
-				'punch_out_methods.name',
-				'punch_out_methods.short_name',
-				DB::raw('IF(punch_out_methods.deleted_at IS NULL, "Active","Inactive") as status'),
-			])
-			->where('punch_out_methods.company_id', Auth::user()->company_id)
-			->get();
+	// public function getPunchOutMethods(Request $request) {
+	// 	$punch_out_methods = PunchOutMethod::withTrashed()
+	// 		->with([
+	// 			'employees',
+	// 			'employees.user',
+	// 		])
+	// 		->select([
+	// 			'punch_out_methods.id',
+	// 			'punch_out_methods.name',
+	// 			DB::raw('IF(punch_out_methods.deleted_at IS NULL, "Active","Inactive") as status'),
+	// 		])
+	// 		->where('punch_out_methods.company_id', Auth::user()->company_id)
+	// 		->get();
 
-		return response()->json([
-			'success' => true,
-			'punch_out_methods' => $punch_out_methods,
-		]);
-	}
+	// 	return response()->json([
+	// 		'success' => true,
+	// 		'punch_out_methods' => $punch_out_methods,
+	// 	]);
+	// }
 }

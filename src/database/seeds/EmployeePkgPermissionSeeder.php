@@ -80,7 +80,7 @@ class EmployeePkgPermissionSeeder extends Seeder {
 			[
 				'display_order' => 2,
 				'parent' => 'punch-out-methods',
-				'name' => 'edit-punch-out-methodn',
+				'name' => 'edit-punch-out-method',
 				'display_name' => 'Edit',
 			],
 			[

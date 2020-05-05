@@ -8,14 +8,13 @@ use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Designation extends Model {
+class PunchOutMethod extends Model {
 	use SeederTrait;
 	use SoftDeletes;
-	protected $table = 'designations';
+	protected $table = 'punch_out_methods';
 	public $timestamps = true;
 	protected $fillable = [
 		'name',
-		'short_name',
 		'company_id',
 	];
 

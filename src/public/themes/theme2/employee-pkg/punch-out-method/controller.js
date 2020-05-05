@@ -1,20 +1,20 @@
-app.component('skillLevelList', {
-    templateUrl: skill_level_list_template_url,
+app.component('punchOutMethodList', {
+    templateUrl: punch_out_method_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
-        $('#search_skill_level').focus();
+        $('#search_punch_out_method').focus();
         var self = this;
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('skill-levels')) {
-            window.location = "#!/page-permission-denied";
+        if (!self.hasPermission('punch-out-methods')) {
+            window.location = "#!/permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('add-skill-level');
+        self.add_permission = self.hasPermission('add-punch-out-method');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
-        var dataTable = $('#skill_levels_list').DataTable({
+        var dataTable = $('#punch_out_methods_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
@@ -33,7 +33,7 @@ app.component('skillLevelList', {
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_skill_level').val(state_save_val.search.search);
+                    $('#search_punch_out_method').val(state_save_val.search.search);
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -43,22 +43,18 @@ app.component('skillLevelList', {
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
-                url: laravel_routes['getSkillLevelList'],
+                url: laravel_routes['getPunchOutMethodList'],
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
                     d.name = $("#name").val();
-                    d.description = $("#description").val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'skill_levels.short_name' },
-                { data: 'name', name: 'skill_levels.name' },
-                { data: 'description', name: 'skill_levels.description' },
+                { data: 'name', name: 'punch_out_methods.name' },
                 { data: 'status', name: '' },
 
             ],
@@ -73,42 +69,42 @@ app.component('skillLevelList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_skill_level').val('');
-            $('#skill_levels_list').DataTable().search('').draw();
+            $('#search_punch_out_method').val('');
+            $('#punch_out_methods_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
-            $('#skill_levels_list').DataTable().ajax.reload();
+            $('#punch_out_methods_list').DataTable().ajax.reload();
         });
 
-        var dataTables = $('#skill_levels_list').dataTable();
-        $("#search_skill_level").keyup(function() {
+        var dataTables = $('#punch_out_methods_list').dataTable();
+        $("#search_punch_out_method").keyup(function() {
             dataTables.fnFilter(this.value);
         });
 
         //DELETE
-        $scope.deleteSkillLevel = function($id) {
-            $('#skill_level_id').val($id);
+        $scope.deletePunchOutMethod = function($id) {
+            $('#punch_out_method_id').val($id);
         }
         $scope.deleteConfirm = function() {
-            $id = $('#skill_level_id').val();
+            $id = $('#punch_out_method_id').val();
             $http.get(
-                laravel_routes['deleteSkillLevel'], {
+                laravel_routes['deletePunchOutMethod'], {
                     params: {
                         id: $id,
                     }
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', 'Skill Level Deleted Successfully');
-                    $('#skill_levels_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/employee-pkg/skill-level/list');
+                    custom_noty('success', 'Punch Out Method Deleted Successfully');
+                    $('#punch_out_methods_list').DataTable().ajax.reload(function(json) {});
+                    $location.path('/employee-pkg/punch-out-method/list');
                 }
             });
         }
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getSkillLevelFilter']
+            laravel_routes['getPunchOutMethodFilter']
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
@@ -128,18 +124,12 @@ app.component('skillLevelList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
+        $scope.applyFilter = function() {
+            $('#status').val(self.status);
             dataTables.fnFilter();
-        });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
-            dataTables.fnFilter();
+            $('#punch-out-method-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
-            $("#short_name").val('');
             $("#name").val('');
             $("#status").val('');
             dataTables.fnFilter();
@@ -151,28 +141,32 @@ app.component('skillLevelList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
-app.component('skillLevelForm', {
-    templateUrl: skill_level_form_template_url,
+app.component('punchOutMethodForm', {
+    templateUrl: punch_out_method_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
+        // alert(1);
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-skill-level') || !self.hasPermission('edit-skill-level')) {
-            window.location = "#!/page-permission-denied";
+        // console.log(self.hasPermission('add-punch-out-method'));
+        // return;
+        if (!self.hasPermission('add-punch-out-method') && !self.hasPermission('edit-punch-out-method')) {
+            window.location = "#!/permission-denied";
             return false;
         }
+        // alert(1);
         self.angular_routes = angular_routes;
         $http.get(
-            laravel_routes['getSkillLevelFormData'], {
+            laravel_routes['getPunchOutMethodFormData'], {
                 params: {
                     id: typeof($routeParams.id) == 'undefined' ? null : $routeParams.id,
                 }
             }
         ).then(function(response) {
-            self.skill_level = response.data.skill_level;
+            self.punch_out_method = response.data.punch_out_method;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
-                if (self.skill_level.deleted_at) {
+                if (self.punch_out_method.deleted_at) {
                     self.switch_value = 'Inactive';
                 } else {
                     self.switch_value = 'Active';
@@ -183,37 +177,20 @@ app.component('skillLevelForm', {
         });
 
         //Save Form Data 
-        var form_id = '#skill_level_form';
+        var form_id = '#punch_out_method_form';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'short_name': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 32,
-                },
                 'name': {
                     required: true,
                     minlength: 3,
-                    maxlength: 128,
-                },
-                'description': {
-                    minlength: 3,
-                    maxlength: 255,
+                    maxlength: 64,
                 }
             },
             messages: {
-                'short_name': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 32 Characters',
-                },
                 'name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
-                },
-                'description': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 255 Characters',
+                    maxlength: 'Maximum 64 Characters',
                 }
             },
             invalidHandler: function(event, validator) {
@@ -223,7 +200,7 @@ app.component('skillLevelForm', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: laravel_routes['saveSkillLevel'],
+                        url: laravel_routes['savePunchOutMethod'],
                         method: "POST",
                         data: formData,
                         processData: false,
@@ -232,7 +209,7 @@ app.component('skillLevelForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            $location.path('/employee-pkg/skill-level/list');
+                            $location.path('/employee-pkg/punch-out-method/list');
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -244,7 +221,7 @@ app.component('skillLevelForm', {
                                 custom_noty('error', errors);
                             } else {
                                 $('.submit').button('reset');
-                                $location.path('/employee-pkg/skill-level/list');
+                                $location.path('/employee-pkg/punch-out-method/list');
                                 $scope.$apply();
                             }
                         }
