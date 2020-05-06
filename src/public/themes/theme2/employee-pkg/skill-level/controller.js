@@ -161,6 +161,8 @@ app.component('skillLevelForm', {
     templateUrl: skill_level_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
+        $("input:text:visible:first").focus();
+
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('add-skill-level') && !self.hasPermission('edit-skill-level')) {
             window.location = "#!/permission-denied";

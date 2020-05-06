@@ -132,6 +132,7 @@ class SkillLevelController extends Controller
 				'description' => [
 					'min:3',
 					'max:255',
+					'publish_at' => 'nullable',
 				],	
 			], $error_messages);
 			if ($validator->fails()) {

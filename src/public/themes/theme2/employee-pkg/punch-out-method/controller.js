@@ -145,6 +145,8 @@ app.component('punchOutMethodForm', {
     templateUrl: punch_out_method_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
+        $("input:text:visible:first").focus();
+
         // alert(1);
         self.hasPermission = HelperService.hasPermission;
         // console.log(self.hasPermission('add-punch-out-method'));
