@@ -132,7 +132,7 @@ app.component('punchOutMethodList', {
         $scope.reset_filter = function() {
             $("#name").val('');
             $("#status").val('');
-            dataTables.fnFilter();
+            // dataTables.fnFilter();
         }
         $rootScope.loading = false;
     }
