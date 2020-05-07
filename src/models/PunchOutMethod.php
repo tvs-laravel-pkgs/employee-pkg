@@ -56,5 +56,17 @@ class PunchOutMethod extends Model {
 	public function employees(){
 		return $this->hasMany('App\Employee');
 	}
+	public static function getList($params = [], $add_default = true, $default_text = 'Select Check-out Option') {
+		$list = Collect(Self::select([
+			'id',
+			'name',
+		])
+				->orderBy('name')
+				->get());
+		if ($add_default) {
+			$list->prepend(['id' => '', 'name' => $default_text]);
+		}
+		return $list;
+	}
 	
 }
