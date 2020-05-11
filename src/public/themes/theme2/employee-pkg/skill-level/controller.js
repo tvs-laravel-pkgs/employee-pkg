@@ -199,30 +199,29 @@ app.component('skillLevelForm', {
                     required: true,
                     minlength: 3,
                     maxlength: 32,
-                },
-                'name': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 128,
-                },
-                'description': {
-                    // minlength: 3,
-                    maxlength: 255,
                 }
+                // 'name': {
+                //     minlength: 3,
+                //     maxlength: 128,
+                // },
+                // 'description': {
+                //     minlength: 3,
+                //     maxlength: 255,
+                // }
             },
             messages: {
                 'short_name': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 32 Characters',
-                },
-                'name': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
-                },
-                'description': {
-                    // minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 255 Characters',
                 }
+                // 'name': {
+                //     minlength: 'Minimum 3 Characters',
+                //     maxlength: 'Maximum 128 Characters',
+                // },
+                // 'description': {
+                //     minlength: 'Minimum 3 Characters',
+                //     maxlength: 'Maximum 255 Characters',
+                // }
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');

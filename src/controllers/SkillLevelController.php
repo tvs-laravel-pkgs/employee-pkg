@@ -109,12 +109,7 @@ class SkillLevelController extends Controller
 				'short_name.unique' => 'Short Name is already taken',
 				'short_name.min' => 'Short Name is Minimum 3 Charachers',
 				'short_name.max' => 'Short Name is Maximum 32 Charachers',
-				'name.required' => 'Name is Required',
 				'name.unique' => 'Name is already taken',
-				'name.min' => 'Name is Minimum 3 Charachers',
-				'name.max' => 'Name is Maximum 128 Charachers',
-				'description.min' => 'Description is Minimum 3 Charachers',
-				'description.max' => 'Description is Maximum 255 Charachers',
 			];
 			$validator = Validator::make($request->all(), [
 				'short_name' => [
@@ -124,15 +119,15 @@ class SkillLevelController extends Controller
 					'unique:skill_levels,short_name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'name' => [
-					'required:true',
 					'min:3',
 					'max:128',
+					'nullable',
 					'unique:skill_levels,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'description' => [
 					'min:3',
 					'max:255',
-					'publish_at' => 'nullable',
+					'nullable',
 				],	
 			], $error_messages);
 			if ($validator->fails()) {
