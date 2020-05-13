@@ -32,6 +32,8 @@ class PunchController extends Controller {
 				// issue : saravanan : readability
 				// return response()->json(['success' => false, 'message' => 'Validation Error', 'errors' => $validator->errors()], $this->successStatus);
 			}
+			$caller = Auth::user();
+			// dd($caller);
 			$user = User::find($request->encrypted_id);
 			if (!$user) {
 				// issue : saravanan : readability
