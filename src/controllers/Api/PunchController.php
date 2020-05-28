@@ -152,6 +152,7 @@ class PunchController extends Controller {
 				$date = date('Y-m-d');
 				$punch->save();
 				$user->employee->outlet;
+				$user->role;
 				$data['punch_user'] = $user;
 				$data['action'] = 'Out';
 				$punch->in_time=date('h:i a',strtotime($punch->in_time));
