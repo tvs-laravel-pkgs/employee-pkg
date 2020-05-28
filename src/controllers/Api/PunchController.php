@@ -64,6 +64,7 @@ class PunchController extends Controller {
 				$punch_in->created_by_id = Auth::id();
 				$punch_in->save();
 				$action = "In";
+				$punch_in->in_time=date('h:i a',strtotime($punch_in->in_time));
 				//dd($punch_in);
 				$data['punch_in'] = $punch_in;
 			}
@@ -71,7 +72,8 @@ class PunchController extends Controller {
 			$data['date'] = date('Y-m-d');
 			$data['time'] = date('h:i a');
 			$user->employee->outlet;
-			$data['user'] = $user;
+			$user->role;
+			$data['punch_user'] = $user;
 			if($action=='In')
 			{
 				return response()->json([
@@ -93,6 +95,7 @@ class PunchController extends Controller {
 	}
 
 	public function savePunchOut(Request $request) {
+			//dd($request->all());
 		try {
 
 			$validator = Validator::make($request->all(), [
@@ -149,8 +152,10 @@ class PunchController extends Controller {
 				$date = date('Y-m-d');
 				$punch->save();
 				$user->employee->outlet;
-				$data['user'] = $user;
+				$data['punch_user'] = $user;
 				$data['action'] = 'Out';
+				$punch->in_time=date('h:i a',strtotime($punch->in_time));
+				$punch->out_time=date('h:i a',strtotime($punch->out_time));
 				$data['punch_out'] = $punch;
 
 			DB::commit();
