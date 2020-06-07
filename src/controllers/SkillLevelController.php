@@ -107,14 +107,14 @@ class SkillLevelController extends Controller
 			$error_messages = [
 				'short_name.required' => 'Short Name is Required',
 				'short_name.unique' => 'Short Name is already taken',
-				'short_name.min' => 'Short Name is Minimum 3 Charachers',
+				'short_name.min' => 'Short Name is Minimum 2 Charachers',
 				'short_name.max' => 'Short Name is Maximum 32 Charachers',
 				'name.unique' => 'Name is already taken',
 			];
 			$validator = Validator::make($request->all(), [
 				'short_name' => [
 					'required:true',
-					'min:3',
+					'min:2',
 					'max:32',
 					'unique:skill_levels,short_name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
