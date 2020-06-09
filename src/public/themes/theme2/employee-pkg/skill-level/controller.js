@@ -197,7 +197,7 @@ app.component('skillLevelForm', {
             rules: {
                 'short_name': {
                     required: true,
-                    minlength: 3,
+                    minlength: 2,
                     maxlength: 32,
                 }
                 // 'name': {
@@ -211,7 +211,7 @@ app.component('skillLevelForm', {
             },
             messages: {
                 'short_name': {
-                    minlength: 'Minimum 3 Characters',
+                    minlength: 'Minimum 2 Characters',
                     maxlength: 'Maximum 32 Characters',
                 }
                 // 'name': {

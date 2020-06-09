@@ -260,10 +260,10 @@ class EmployeeController extends Controller {
 			}
 			$employee->save();
 			/*if ($request->user['invitation_sent'] == 'No') {
-			$user->invitation_sent = 0;
-			} else {
-			$user->invitation_sent = 1;
-			}*/
+				$user->invitation_sent = 0;
+				} else {
+				$user->invitation_sent = 1;
+			*/
 			//dd($request->user['invitation_sent']);
 			$user->fill($request->user);
 			$user->has_mobile_login = 0;
@@ -384,15 +384,15 @@ class EmployeeController extends Controller {
 					->forceDelete();
 				$employee = Employee::withTrashed()->where('id', $request->id)->forceDelete();
 				/*$activity = new ActivityLog;
-				$activity->date_time = Carbon::now();
-				$activity->user_id = Auth::user()->id;
-				$activity->module = 'Employees';
-				$activity->entity_id = $request->id;
-				$activity->entity_type_id = 1420;
-				$activity->activity_id = 282;
-				$activity->activity = 282;
-				$activity->details = json_encode($activity);
-				 */
+					$activity->date_time = Carbon::now();
+					$activity->user_id = Auth::user()->id;
+					$activity->module = 'Employees';
+					$activity->entity_id = $request->id;
+					$activity->entity_type_id = 1420;
+					$activity->activity_id = 282;
+					$activity->activity = 282;
+					$activity->details = json_encode($activity);
+				*/
 
 				DB::commit();
 				return response()->json(['success' => true, 'message' => 'Employee Deleted Successfully']);
@@ -414,9 +414,9 @@ class EmployeeController extends Controller {
 				'employees.github_username',
 				'employees.date_of_join',
 				'employees.designation_id',
-				DB::raw('IF(employees.deleted_at IS NULL, "Active","Inactive") as status')
+				DB::raw('IF(employees.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
-			->join('users','users.entity_id','employees.id')
+			->join('users', 'users.entity_id', 'employees.id')
 			->where('users.user_type_id', 1)
 			->where('employees.company_id', Auth::user()->company_id)
 			->orderBy('users.first_name')

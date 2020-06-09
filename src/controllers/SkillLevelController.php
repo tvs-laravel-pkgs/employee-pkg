@@ -2,10 +2,7 @@
 
 namespace Abs\EmployeePkg;
 
-use Abs\ApprovalPkg\ApprovalType;
-use Abs\ApprovalPkg\EntityStatus;
 use Abs\EmployeePkg\SkillLevel;
-use App\ActivityLog;
 use App\Config;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -16,9 +13,8 @@ use Illuminate\Http\Request;
 use Validator;
 use Yajra\Datatables\Datatables;
 
-class SkillLevelController extends Controller
-{
-    public function __construct() {
+class SkillLevelController extends Controller {
+	public function __construct() {
 		$this->data['theme'] = config('custom.admin_theme');
 	}
 
@@ -63,7 +59,7 @@ class SkillLevelController extends Controller
 		;
 
 		return Datatables::of($skill_levels)
-			
+
 			->addColumn('status', function ($skill_level) {
 				$status = $skill_level->status == 'Active' ? 'green' : 'red';
 				return '<span class="status-indigator ' . $status . '"></span>' . $skill_level->status;
@@ -74,7 +70,7 @@ class SkillLevelController extends Controller
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$action = '';
-				
+
 				if (Entrust::can('edit-skill-level')) {
 					$action .= '<a href="#!/employee-pkg/skill-level/edit/' . $skill_level->id . '" id = "" title="Edit"><img src="' . $img_edit . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img_edit_active . '" onmouseout=this.src="' . $img_edit . '"></a>';
 				}
@@ -107,14 +103,14 @@ class SkillLevelController extends Controller
 			$error_messages = [
 				'short_name.required' => 'Short Name is Required',
 				'short_name.unique' => 'Short Name is already taken',
-				'short_name.min' => 'Short Name is Minimum 3 Charachers',
+				'short_name.min' => 'Short Name is Minimum 2 Charachers',
 				'short_name.max' => 'Short Name is Maximum 32 Charachers',
 				'name.unique' => 'Name is already taken',
 			];
 			$validator = Validator::make($request->all(), [
 				'short_name' => [
 					'required:true',
-					'min:3',
+					'min:2',
 					'max:32',
 					'unique:skill_levels,short_name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
@@ -128,7 +124,7 @@ class SkillLevelController extends Controller
 					'min:3',
 					'max:255',
 					'nullable',
-				],	
+				],
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
@@ -155,7 +151,7 @@ class SkillLevelController extends Controller
 				$skill_level->deleted_at = NULL;
 			}
 			$skill_level->save();
-			
+
 			DB::commit();
 			if (!($request->id)) {
 				return response()->json([
