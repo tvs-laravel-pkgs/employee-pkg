@@ -133,12 +133,12 @@ class PunchOutMethodController extends Controller {
 			if (!($request->id)) {
 				return response()->json([
 					'success' => true,
-					'message' => 'Punch Out Method Added Successfully',
+					'message' => 'Check Out Method Added Successfully',
 				]);
 			} else {
 				return response()->json([
 					'success' => true,
-					'message' => 'Punch Out Method Updated Successfully',
+					'message' => 'Check Out Method Updated Successfully',
 				]);
 			}
 		} catch (Exceprion $e) {
@@ -157,7 +157,7 @@ class PunchOutMethodController extends Controller {
 			$punch_out_method = PunchOutMethod::withTrashed()->where('id', $request->id)->forceDelete();
 			if ($punch_out_method) {
 				DB::commit();
-				return response()->json(['success' => true, 'message' => 'Punch Out Method Deleted Successfully']);
+				return response()->json(['success' => true, 'message' => 'Check Out Method Deleted Successfully']);
 			}
 		} catch (Exception $e) {
 			DB::rollBack();
@@ -165,23 +165,4 @@ class PunchOutMethodController extends Controller {
 		}
 	}
 
-	// public function getPunchOutMethods(Request $request) {
-	// 	$punch_out_methods = PunchOutMethod::withTrashed()
-	// 		->with([
-	// 			'employees',
-	// 			'employees.user',
-	// 		])
-	// 		->select([
-	// 			'punch_out_methods.id',
-	// 			'punch_out_methods.name',
-	// 			DB::raw('IF(punch_out_methods.deleted_at IS NULL, "Active","Inactive") as status'),
-	// 		])
-	// 		->where('punch_out_methods.company_id', Auth::user()->company_id)
-	// 		->get();
-
-	// 	return response()->json([
-	// 		'success' => true,
-	// 		'punch_out_methods' => $punch_out_methods,
-	// 	]);
-	// }
 }
