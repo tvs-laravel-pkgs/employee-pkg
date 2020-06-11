@@ -132,7 +132,8 @@ app.component('punchOutMethodList', {
         $scope.reset_filter = function() {
             $("#name").val('');
             $("#status").val('');
-            // dataTables.fnFilter();
+            dataTables.fnFilter();
+            $('#punch-out-method-filter-modal').modal('hide');
         }
         $rootScope.loading = false;
     }
@@ -196,7 +197,7 @@ app.component('punchOutMethodForm', {
                 }
             },
             invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
+                custom_noty('error', 'You have errors, Please check the tab');
             },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);

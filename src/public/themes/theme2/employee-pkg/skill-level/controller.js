@@ -148,7 +148,8 @@ app.component('skillLevelList', {
             $("#short_name").val('');
             $("#name").val('');
             $("#status").val('');
-            // dataTables.fnFilter();
+            dataTables.fnFilter();
+            $('#skill-level-filter-modal').modal('hide');
         }
         $rootScope.loading = false;
     }
@@ -224,7 +225,7 @@ app.component('skillLevelForm', {
                 // }
             },
             invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
+                custom_noty('error', 'You have errors, Please check the tab');
             },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
