@@ -55,7 +55,7 @@ class PunchOutMethodController extends Controller {
 		;
 
 		return Datatables::of($punch_out_methods)
-			// ->rawColumns(['name', 'action'])
+		// ->rawColumns(['name', 'action'])
 			->addColumn('status', function ($punch_out_method) {
 				$status = $punch_out_method->status == 'Active' ? 'green' : 'red';
 				return '<span class="status-indicator ' . $status . '"></span>' . $punch_out_method->status;
@@ -66,7 +66,7 @@ class PunchOutMethodController extends Controller {
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$action = '';
-				
+
 				if (Entrust::can('edit-punch-out-method')) {
 					$action .= '<a href="#!/employee-pkg/punch-out-method/edit/' . $punch_out_method->id . '" id = "" title="Edit"><img src="' . $img_edit . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img_edit_active . '" onmouseout=this.src="' . $img_edit . '"></a>';
 				}

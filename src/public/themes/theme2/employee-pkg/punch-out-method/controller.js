@@ -95,7 +95,7 @@ app.component('punchOutMethodList', {
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', 'Punch Out Method Deleted Successfully');
+                    custom_noty('success', 'Check Out Method Deleted Successfully');
                     $('#punch_out_methods_list').DataTable().ajax.reload(function(json) {});
                     $location.path('/employee-pkg/punch-out-method/list');
                 }
