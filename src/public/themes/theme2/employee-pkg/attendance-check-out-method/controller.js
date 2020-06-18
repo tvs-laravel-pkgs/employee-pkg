@@ -1,5 +1,5 @@
-app.component('punchOutMethodList', {
-    templateUrl: punch_out_method_list_template_url,
+app.component('attendanceCheckOutMethodList', {
+    templateUrl: attendance_check_out_method_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
         $('#search_punch_out_method').focus();
@@ -95,9 +95,9 @@ app.component('punchOutMethodList', {
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', 'Check Out Method Deleted Successfully');
+                    custom_noty('success', 'Attendance Check Out Method Deleted Successfully');
                     $('#punch_out_methods_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/employee-pkg/punch-out-method/list');
+                    $location.path('/employee-pkg/attendance-check-out-method/list');
                 }
             });
         }
@@ -142,8 +142,8 @@ app.component('punchOutMethodList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
-app.component('punchOutMethodForm', {
-    templateUrl: punch_out_method_form_template_url,
+app.component('attendanceCheckOutMethodForm', {
+    templateUrl: attendance_check_out_method_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         $("input:text:visible:first").focus();
@@ -212,7 +212,7 @@ app.component('punchOutMethodForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            $location.path('/employee-pkg/punch-out-method/list');
+                            $location.path('/employee-pkg/attendance-check-out-method/list');
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -220,7 +220,7 @@ app.component('punchOutMethodForm', {
                                 showErrorNoty(res);
                             } else {
                                 $('.submit').button('reset');
-                                $location.path('/employee-pkg/punch-out-method/list');
+                                $location.path('/employee-pkg/attendance-check-out-method/list');
                                 $scope.$apply();
                             }
                         }

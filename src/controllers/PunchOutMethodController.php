@@ -68,7 +68,7 @@ class PunchOutMethodController extends Controller {
 				$action = '';
 
 				if (Entrust::can('edit-punch-out-method')) {
-					$action .= '<a href="#!/employee-pkg/punch-out-method/edit/' . $punch_out_method->id . '" id = "" title="Edit"><img src="' . $img_edit . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img_edit_active . '" onmouseout=this.src="' . $img_edit . '"></a>';
+					$action .= '<a href="#!/employee-pkg/attendance-check-out-method/edit/' . $punch_out_method->id . '" id = "" title="Edit"><img src="' . $img_edit . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img_edit_active . '" onmouseout=this.src="' . $img_edit . '"></a>';
 				}
 				if (Entrust::can('delete-punch-out-method')) {
 					$action .= '<a href="javascript:;" data-toggle="modal" data-target="#delete_punch_out_method" onclick="angular.element(this).scope().deletePunchOutMethod(' . $punch_out_method->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete_active . '" onmouseout=this.src="' . $img_delete . '"></a>';
@@ -133,12 +133,12 @@ class PunchOutMethodController extends Controller {
 			if (!($request->id)) {
 				return response()->json([
 					'success' => true,
-					'message' => 'Check Out Method Added Successfully',
+					'message' => 'Attendance Check Out Method Added Successfully',
 				]);
 			} else {
 				return response()->json([
 					'success' => true,
-					'message' => 'Check Out Method Updated Successfully',
+					'message' => 'Attendance Check Out Method Updated Successfully',
 				]);
 			}
 		} catch (Exceprion $e) {
@@ -157,7 +157,7 @@ class PunchOutMethodController extends Controller {
 			$punch_out_method = PunchOutMethod::withTrashed()->where('id', $request->id)->forceDelete();
 			if ($punch_out_method) {
 				DB::commit();
-				return response()->json(['success' => true, 'message' => 'Check Out Method Deleted Successfully']);
+				return response()->json(['success' => true, 'message' => 'Attendance Check Out Method Deleted Successfully']);
 			}
 		} catch (Exception $e) {
 			DB::rollBack();
