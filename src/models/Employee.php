@@ -3,12 +3,12 @@
 namespace Abs\EmployeePkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\BaseModel;
 use App\Company;
 use App\Config;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Employee extends Model {
+class Employee extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'employees';
@@ -17,27 +17,36 @@ class Employee extends Model {
 		'code',
 		'designation_id',
 		'github_username',
-		'date_of_join'
+		'date_of_join',
 	];
+
+	// Getters --------------------------------------------------------------
+
+	public function getDateOfJoinAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	}
+
+	// Setters --------------------------------------------------------------
+
+	public function setDateOfJoinAttribute($date) {
+		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	}
+
+	// Relationships --------------------------------------------------------------
 
 	public function user() {
 		return $this->hasOne('App\User', 'entity_id')->where('users.user_type_id', 1);
 	}
 
 	public function designation() {
-		return $this->belongsTo('App\Designation','designation_id');
+		return $this->belongsTo('App\Designation', 'designation_id');
 	}
 
 	public function employeeAttachment() {
 		return $this->hasOne('Abs\BasicPkg\Attachment', 'entity_id')->where('attachment_of_id', 120)->where('attachment_type_id', 140);
 	}
-	public function getDateOfJoinAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y', strtotime($value));
-	}
 
-	public function setDateOfJoinAttribute($date) {
-		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
-	}
+	// Static Operations --------------------------------------------------------------
 
 	public static function createFromObject($record_data) {
 
