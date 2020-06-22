@@ -4,9 +4,11 @@ namespace Abs\EmployeePkg\Api;
 
 use Abs\EmployeePkg\PunchOutMethod;
 use App\AttendanceLog;
+use App\Employee;
 use App\Http\Controllers\Controller;
 use App\User;
 use Auth;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Validator;
@@ -45,6 +47,8 @@ class PunchController extends Controller {
 				// return response()->json(['status' => false, 'message' => 'Employee not found'], $this->successStatus);
 			}
 
+			DB::beginTransaction();
+
 			$punch = AttendanceLog::whereDate('date', date('Y-m-d'))
 				->where('user_id', $user->id)
 				->whereNull('out_time')
@@ -65,6 +69,7 @@ class PunchController extends Controller {
 				$punch_in_time = strtotime($time);
 				$punch_in->in_time = date('H:i:s', $punch_in_time);
 				$punch_in->user_id = $user->id;
+				$punch_in->punch_in_outlet_id = $user->employee->outlet->id;
 				$punch_in->created_by_id = Auth::id();
 				$punch_in->save();
 				$action = "In";
@@ -72,12 +77,27 @@ class PunchController extends Controller {
 				//dd($punch_in);
 				$data['punch_in'] = $punch_in;
 			}
+
 			$data['action'] = $action;
 			$data['date'] = date('Y-m-d');
 			$data['time'] = date('h:i a');
 			$user->employee->outlet;
 			$user->role;
 			$data['punch_user'] = $user;
+
+			//UPDATE OUTLET DETAIL TO EMPLOYEE TABLE
+			$auth_user_of_employee = Employee::find(Auth::user()->entity_id);
+			$auth_user_outlet_id = $auth_user_of_employee->outlet_id;
+			// dump($auth_user_outlet_id, $user->employee->outlet_id);
+			if ($auth_user_outlet_id != $user->employee->outlet_id) {
+				$update_employee = Employee::where('id', $user->employee->id)
+					->update([
+						'deputed_outlet_id' => $auth_user_outlet_id,
+						'updated_at' => Carbon::now(),
+					]);
+			}
+
+			DB::commit();
 
 			if ($action == 'In') {
 				return response()->json([
@@ -101,7 +121,7 @@ class PunchController extends Controller {
 	}
 
 	public function savePunchOut(Request $request) {
-		//dd($request->all());
+		// dd($request->all());
 		try {
 
 			$validator = Validator::make($request->all(), [
@@ -164,6 +184,18 @@ class PunchController extends Controller {
 			$punch->in_time = date('h:i a', strtotime($punch->in_time));
 			$punch->out_time = date('h:i a', strtotime($punch->out_time));
 			$data['punch_out'] = $punch;
+
+			//UPDATE OUTLET DETAIL TO EMPLOYEE TABLE
+			$auth_user_of_employee = Employee::find(Auth::user()->entity_id);
+			$auth_user_outlet_id = $auth_user_of_employee->outlet_id;
+			// dump($auth_user_outlet_id, $user->employee->outlet_id);
+			if ($auth_user_outlet_id != $user->employee->outlet_id) {
+				$update_employee = Employee::where('id', $user->employee->id)
+					->update([
+						'deputed_outlet_id' => NULL,
+						'updated_at' => Carbon::now(),
+					]);
+			}
 
 			DB::commit();
 			return response()->json([
