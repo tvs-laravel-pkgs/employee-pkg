@@ -196,9 +196,6 @@ app.component('attendanceCheckOutMethodForm', {
                     maxlength: 'Maximum 64 Characters',
                 }
             },
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check the tab');
-            },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
