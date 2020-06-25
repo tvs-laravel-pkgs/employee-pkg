@@ -4,7 +4,6 @@ namespace Abs\EmployeePkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
-use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -20,43 +19,95 @@ class SkillLevel extends Model {
 		'description',
 	];
 
+	protected static $excelColumnRules = [
+		'Short Name' => [
+			'table_column_name' => 'short_name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Name' => [
+			'table_column_name' => 'name',
+			'rules' => [
+				'nullable' => [
+				],
+			],
+		],
+		'Description' => [
+			'table_column_name' => 'description',
+			'rules' => [
+				'nullable' => [
+				],
+			],
+		],
+	];
+	// Query Scopes --------------------------------------------------------------
+
+	public function scopeFilterSearch($query, $term) {
+		if (strlen($term)) {
+			$query->where(function ($query) use ($term) {
+				$query->orWhere('code', 'LIKE', '%' . $term . '%');
+				$query->orWhere('name', 'LIKE', '%' . $term . '%');
+			});
+		}
+	}
+
+	// Relations --------------------------------------------------------------
+
 	public function employees() {
 		return $this->hasMany('App\Employee', 'skill_level_id');
 	}
 
-	public static function createFromObject($record_data) {
+	// Static Operations --------------------------------------------------------------
 
+	public static function saveFromObject($record_data) {
+		$record = [
+			'Company Code' => $record_data->company_code,
+			'Short Name' => $record_data->short_name,
+			'Name' => $record_data->name,
+			'Discription' => $record_data->discription,
+		];
+		return static::saveFromExcelArray($record);
+	}
+
+	public static function saveFromExcelArray($record_data) {
 		$errors = [];
-		$company = Company::where('code', $record_data->company)->first();
+		$company = Company::where('code', $record_data['Company Code'])->first();
 		if (!$company) {
-			dump('Invalid Company : ' . $record_data->company);
-			return;
+			return [
+				'success' => false,
+				'errors' => ['Invalid Company : ' . $record_data['Company Code']],
+			];
 		}
 
-		$admin = $company->admin();
-		if (!$admin) {
-			dump('Default Admin user not found');
-			return;
-		}
+		if (!isset($record_data['created_by_id'])) {
+			$admin = $company->admin();
 
-		$type = Config::where('name', $record_data->type)->where('config_type_id', 89)->first();
-		if (!$type) {
-			$errors[] = 'Invalid Tax Type : ' . $record_data->type;
-		}
-
-		if (count($errors) > 0) {
-			dump($errors);
-			return;
+			if (!$admin) {
+				return [
+					'success' => false,
+					'errors' => ['Default Admin user not found'],
+				];
+			}
+			$created_by_id = $admin->id;
+		} else {
+			$created_by_id = $record_data['created_by_id'];
 		}
 
 		$record = self::firstOrNew([
 			'company_id' => $company->id,
-			'name' => $record_data->tax_name,
+			'short_name' => $record_data['Short Name'],
 		]);
-		$record->type_id = $type->id;
-		$record->created_by_id = $admin->id;
-		$record->save();
-		return $record;
-	}
 
+		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
+		if (!$result['success']) {
+			return $result;
+		}
+		$record->created_by_id = $created_by_id;
+		$record->save();
+		return [
+			'success' => true,
+		];
+	}
 }
