@@ -32,19 +32,14 @@ class PunchController extends Controller {
 					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				], $this->successStatus);
-				// issue : saravanan : readability
-				// return response()->json(['success' => false, 'message' => 'Validation Error', 'errors' => $validator->errors()], $this->successStatus);
 			}
-			$caller = Auth::user();
-			// dd($caller);
+
 			$user = User::find($request->encrypted_id);
 			if (!$user) {
-				// issue : saravanan : readability
 				return response()->json([
 					'status' => false,
 					'message' => 'User not found',
 				], $this->successStatus);
-				// return response()->json(['status' => false, 'message' => 'Employee not found'], $this->successStatus);
 			}
 
 			DB::beginTransaction();
@@ -56,46 +51,43 @@ class PunchController extends Controller {
 				->first();
 
 			if ($punch) {
+				//Already Punch In
 				//PUNCH OUT
 				$action = "Out";
-				$data['punch_in'] = $punch;
+				$data['punch_data'] = $punch;
 				$data['punch_out_method_list'] = PunchOutMethod::getList();
 
 			} else {
 				//PUNCH IN
-				$punch_in = new AttendanceLog();
-				$punch_in->date = $date = date('Y-m-d');
-				$time = date('H:i:s');
-				$punch_in_time = strtotime($time);
-				$punch_in->in_time = date('H:i:s', $punch_in_time);
-				$punch_in->user_id = $user->id;
-				$punch_in->punch_in_outlet_id = $user->employee->outlet->id;
-				$punch_in->created_by_id = Auth::id();
-				$punch_in->save();
+				$punch = new AttendanceLog();
+				$punch->user_id = $user->id;
+				$punch->date = $date = date('Y-m-d');
+				$punch->in_time = date('H:i:s');
+				$punch->punch_in_outlet_id = Auth::user()->working_outlet_id;
+				$punch->created_by_id = Auth::id();
+				$punch->save();
 				$action = "In";
-				$punch_in->in_time = date('h:i a', strtotime($punch_in->in_time));
-				//dd($punch_in);
-				$data['punch_in'] = $punch_in;
+
+				//UPDATE OUTLET DETAIL TO EMPLOYEE TABLE
+				$auth_user_of_employee = Employee::find(Auth::user()->entity_id);
+				$auth_user_outlet_id = $auth_user_of_employee->outlet_id;
+
+				if ($auth_user_outlet_id != $user->employee->outlet_id) {
+					$update_employee = Employee::where('id', $user->employee->id)
+						->update([
+							'deputed_outlet_id' => $auth_user_outlet_id,
+							'updated_at' => Carbon::now(),
+						]);
+				}
 			}
 
 			$data['action'] = $action;
-			$data['date'] = date('Y-m-d');
-			$data['time'] = date('h:i a');
+
 			$user->employee->outlet;
 			$user->role;
-			$data['punch_user'] = $user;
+			$user->punch_data = $punch;
 
-			//UPDATE OUTLET DETAIL TO EMPLOYEE TABLE
-			$auth_user_of_employee = Employee::find(Auth::user()->entity_id);
-			$auth_user_outlet_id = $auth_user_of_employee->outlet_id;
-			// dump($auth_user_outlet_id, $user->employee->outlet_id);
-			if ($auth_user_outlet_id != $user->employee->outlet_id) {
-				$update_employee = Employee::where('id', $user->employee->id)
-					->update([
-						'deputed_outlet_id' => $auth_user_outlet_id,
-						'updated_at' => Carbon::now(),
-					]);
-			}
+			$data['punch_user'] = $user;
 
 			DB::commit();
 
@@ -105,12 +97,12 @@ class PunchController extends Controller {
 					'message' => 'Punch ' . $action . ' success!',
 					'data' => $data,
 				], $this->successStatus);
+			} else {
+				return response()->json([
+					'success' => true,
+					'data' => $data,
+				], $this->successStatus);
 			}
-
-			return response()->json([
-				'success' => true,
-				'data' => $data,
-			], $this->successStatus);
 
 		} catch (Exception $e) {
 			return response()->json([
@@ -165,30 +157,30 @@ class PunchController extends Controller {
 			DB::beginTransaction();
 
 			$time1 = strtotime($punch->in_time);
-			$time2 = strtotime(date('H:i:s'));
+			$punch_out_time = date('H:i:s');
+
+			$time2 = strtotime($punch_out_time);
 			if ($time2 < $time1) {
 				$time2 += 86400;
 			}
 			$difference = date("H:i", strtotime("00:00") + ($time2 - $time1));
-			$punch->out_time = date('H:i:s');
+			$punch->out_time = $punch_out_time;
 			$punch->duration = $difference;
 			$punch->punch_out_method_id = $request->punch_out_method_id;
 			$punch->remarks = $request->remarks;
 			$punch->updated_by_id = Auth::id();
-			$date = date('Y-m-d');
 			$punch->save();
+
 			$user->employee->outlet;
 			$user->role;
+			$user->punch_data = $punch;
+
 			$data['punch_user'] = $user;
-			$data['action'] = 'Out';
-			$punch->in_time = date('h:i a', strtotime($punch->in_time));
-			$punch->out_time = date('h:i a', strtotime($punch->out_time));
-			$data['punch_out'] = $punch;
 
 			//UPDATE OUTLET DETAIL TO EMPLOYEE TABLE
 			$auth_user_of_employee = Employee::find(Auth::user()->entity_id);
 			$auth_user_outlet_id = $auth_user_of_employee->outlet_id;
-			// dump($auth_user_outlet_id, $user->employee->outlet_id);
+
 			if ($auth_user_outlet_id != $user->employee->outlet_id) {
 				$update_employee = Employee::where('id', $user->employee->id)
 					->update([
@@ -200,7 +192,7 @@ class PunchController extends Controller {
 			DB::commit();
 			return response()->json([
 				'success' => true,
-				'message' => 'Punch ' . $data['action'] . ' success!',
+				'message' => 'Punch Out success!',
 				'data' => $data,
 			], $this->successStatus);
 		} catch (Exception $e) {
