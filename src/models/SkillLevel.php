@@ -66,7 +66,7 @@ class SkillLevel extends Model {
 			'Company Code' => $record_data->company_code,
 			'Short Name' => $record_data->short_name,
 			'Name' => $record_data->name,
-			'Discription' => $record_data->discription,
+			'Description' => $record_data->description,
 		];
 		return static::saveFromExcelArray($record);
 	}
