@@ -53,10 +53,19 @@ class PunchController extends Controller {
 			if ($punch) {
 				//Already Punch In
 				//PUNCH OUT
-				$action = "Out";
-				$data['punch_data'] = $punch;
-				$data['punch_out_method_list'] = PunchOutMethod::getList();
+				$punch_in_time = (date('h:i:s A', strtotime('+1 minutes', strtotime($punch->in_time))));
+				$current_time = date('h:i:s A');
 
+				$punch_in = strtotime($punch_in_time);
+				$current_in = strtotime($current_time);
+
+				if ($current_in < $punch_in) {
+					$action = "In";
+				} else {
+					$action = "Out";
+					$data['punch_data'] = $punch;
+					$data['punch_out_method_list'] = PunchOutMethod::getList();
+				}
 			} else {
 				//PUNCH IN
 				$punch = new AttendanceLog();
