@@ -92,6 +92,17 @@ class PunchController extends Controller {
 
 			$data['action'] = $action;
 
+			$user['shift_start_time'] = '0:00';
+			// $user['shift_end_time'] = '0:00';
+			$shift_timing = DB::table('outlet_shift')
+				->where('outlet_id', $user->employee->outlet_id)
+				->where('shift_id', $user->employee->shift_id)
+				->first();
+			if ($shift_timing) {
+				$user['shift_start_time'] = date('h:i a', strtotime($shift_timing->start_time));
+				// $user['shift_end_time'] = date('h:i a', strtotime($shift_timing->end_time));
+			}
+
 			$user->employee->outlet;
 			$user->role;
 			$user->punch_data = $punch;
@@ -179,6 +190,17 @@ class PunchController extends Controller {
 			$punch->remarks = $request->remarks;
 			$punch->updated_by_id = Auth::id();
 			$punch->save();
+
+			// $user['shift_start_time'] = '0:00';
+			$user['shift_end_time'] = '0:00';
+			$shift_timing = DB::table('outlet_shift')
+				->where('outlet_id', $user->employee->outlet_id)
+				->where('shift_id', $user->employee->shift_id)
+				->first();
+			if ($shift_timing) {
+				// $user['shift_start_time'] = date('h:i a', strtotime($shift_timing->start_time));
+				$user['shift_end_time'] = date('h:i a', strtotime($shift_timing->end_time));
+			}
 
 			$user->employee->outlet;
 			$user->role;
