@@ -53,10 +53,19 @@ class PunchController extends Controller {
 			if ($punch) {
 				//Already Punch In
 				//PUNCH OUT
-				$action = "Out";
-				$data['punch_data'] = $punch;
-				$data['punch_out_method_list'] = PunchOutMethod::getList();
+				$punch_in_time = (date('h:i:s A', strtotime('+1 minutes', strtotime($punch->in_time))));
+				$current_time = date('h:i:s A');
 
+				$punch_in = strtotime($punch_in_time);
+				$current_in = strtotime($current_time);
+
+				if ($current_in < $punch_in) {
+					$action = "In";
+				} else {
+					$action = "Out";
+					$data['punch_data'] = $punch;
+					$data['punch_out_method_list'] = PunchOutMethod::getList();
+				}
 			} else {
 				//PUNCH IN
 				$punch = new AttendanceLog();
@@ -83,7 +92,19 @@ class PunchController extends Controller {
 
 			$data['action'] = $action;
 
+			$user['shift_start_time'] = '0:00';
+			// $user['shift_end_time'] = '0:00';
+			$shift_timing = DB::table('outlet_shift')
+				->where('outlet_id', $user->employee->outlet_id)
+				->where('shift_id', $user->employee->shift_id)
+				->first();
+			if ($shift_timing) {
+				$user['shift_start_time'] = date('h:i a', strtotime($shift_timing->start_time));
+				$user['shift_end_time'] = date('h:i a', strtotime($shift_timing->end_time));
+			}
+
 			$user->employee->outlet;
+			$user->employee->designation;
 			$user->role;
 			$user->punch_data = $punch;
 
@@ -171,7 +192,19 @@ class PunchController extends Controller {
 			$punch->updated_by_id = Auth::id();
 			$punch->save();
 
+			// $user['shift_start_time'] = '0:00';
+			$user['shift_end_time'] = '0:00';
+			$shift_timing = DB::table('outlet_shift')
+				->where('outlet_id', $user->employee->outlet_id)
+				->where('shift_id', $user->employee->shift_id)
+				->first();
+			if ($shift_timing) {
+				$user['shift_start_time'] = date('h:i a', strtotime($shift_timing->start_time));
+				$user['shift_end_time'] = date('h:i a', strtotime($shift_timing->end_time));
+			}
+
 			$user->employee->outlet;
+			$user->employee->designation;
 			$user->role;
 			$user->punch_data = $punch;
 
