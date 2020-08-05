@@ -99,8 +99,8 @@ class PunchController extends Controller {
 				->where('shift_id', $user->employee->shift_id)
 				->first();
 			if ($shift_timing) {
-				$user['shift_start_time'] = date('h:i a', strtotime($shift_timing->start_time));
-				$user['shift_end_time'] = date('h:i a', strtotime($shift_timing->end_time));
+				$user['shift_start_time'] = date('h:i A', strtotime($shift_timing->start_time));
+				$user['shift_end_time'] = date('h:i A', strtotime($shift_timing->end_time));
 			}
 
 			$user->employee->outlet;
@@ -199,8 +199,8 @@ class PunchController extends Controller {
 				->where('shift_id', $user->employee->shift_id)
 				->first();
 			if ($shift_timing) {
-				$user['shift_start_time'] = date('h:i a', strtotime($shift_timing->start_time));
-				$user['shift_end_time'] = date('h:i a', strtotime($shift_timing->end_time));
+				$user['shift_start_time'] = date('h:i A', strtotime($shift_timing->start_time));
+				$user['shift_end_time'] = date('h:i A', strtotime($shift_timing->end_time));
 			}
 
 			$user->employee->outlet;
