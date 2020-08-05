@@ -72,42 +72,50 @@ class SkillLevel extends Model {
 	}
 
 	public static function saveFromExcelArray($record_data) {
-		$errors = [];
-		$company = Company::where('code', $record_data['Company Code'])->first();
-		if (!$company) {
-			return [
-				'success' => false,
-				'errors' => ['Invalid Company : ' . $record_data['Company Code']],
-			];
-		}
-
-		if (!isset($record_data['created_by_id'])) {
-			$admin = $company->admin();
-
-			if (!$admin) {
+		try {
+			$errors = [];
+			$company = Company::where('code', $record_data['Company Code'])->first();
+			if (!$company) {
 				return [
 					'success' => false,
-					'errors' => ['Default Admin user not found'],
+					'errors' => ['Invalid Company : ' . $record_data['Company Code']],
 				];
 			}
-			$created_by_id = $admin->id;
-		} else {
-			$created_by_id = $record_data['created_by_id'];
-		}
 
-		$record = self::firstOrNew([
-			'company_id' => $company->id,
-			'short_name' => $record_data['Short Name'],
-		]);
+			if (!isset($record_data['created_by_id'])) {
+				$admin = $company->admin();
 
-		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
-		if (!$result['success']) {
-			return $result;
+				if (!$admin) {
+					return [
+						'success' => false,
+						'errors' => ['Default Admin user not found'],
+					];
+				}
+				$created_by_id = $admin->id;
+			} else {
+				$created_by_id = $record_data['created_by_id'];
+			}
+
+			$record = self::firstOrNew([
+				'company_id' => $company->id,
+				'short_name' => $record_data['Short Name'],
+			]);
+
+			$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
+			if (!$result['success']) {
+				return $result;
+			}
+			$record->created_by_id = $created_by_id;
+			$record->save();
+			return [
+				'success' => true,
+			];
+		} catch (\Exception $e) {
+			return [
+				'success' => false,
+				'errors' => [$e->getMessage()],
+			];
+
 		}
-		$record->created_by_id = $created_by_id;
-		$record->save();
-		return [
-			'success' => true,
-		];
 	}
 }
