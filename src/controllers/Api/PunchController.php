@@ -6,6 +6,7 @@ use Abs\EmployeePkg\PunchOutMethod;
 use App\AttendanceLog;
 use App\Employee;
 use App\Http\Controllers\Controller;
+use App\Shift;
 use App\User;
 use Auth;
 use Carbon\Carbon;
@@ -92,8 +93,8 @@ class PunchController extends Controller {
 
 			$data['action'] = $action;
 
-			$user['shift_start_time'] = '0:00';
-			// $user['shift_end_time'] = '0:00';
+			$user['shift_start_time'] = '-';
+			$user['shift_end_time'] = '-';
 			$shift_timing = DB::table('outlet_shift')
 				->where('outlet_id', $user->employee->outlet_id)
 				->where('shift_id', $user->employee->shift_id)
@@ -101,6 +102,10 @@ class PunchController extends Controller {
 			if ($shift_timing) {
 				$user['shift_start_time'] = date('h:i A', strtotime($shift_timing->start_time));
 				$user['shift_end_time'] = date('h:i A', strtotime($shift_timing->end_time));
+			}
+
+			if ($user->employee->shift_id) {
+				$user['shift'] = Shift::where('id', $user->employee->shift_id)->first();
 			}
 
 			$user->employee->outlet;
@@ -192,8 +197,8 @@ class PunchController extends Controller {
 			$punch->updated_by_id = Auth::id();
 			$punch->save();
 
-			// $user['shift_start_time'] = '0:00';
-			$user['shift_end_time'] = '0:00';
+			$user['shift_start_time'] = '-';
+			$user['shift_end_time'] = '-';
 			$shift_timing = DB::table('outlet_shift')
 				->where('outlet_id', $user->employee->outlet_id)
 				->where('shift_id', $user->employee->shift_id)
@@ -201,6 +206,10 @@ class PunchController extends Controller {
 			if ($shift_timing) {
 				$user['shift_start_time'] = date('h:i A', strtotime($shift_timing->start_time));
 				$user['shift_end_time'] = date('h:i A', strtotime($shift_timing->end_time));
+			}
+
+			if ($user->employee->shift_id) {
+				$user['shift'] = Shift::where('id', $user->employee->shift_id)->first();
 			}
 
 			$user->employee->outlet;
