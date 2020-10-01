@@ -4,6 +4,7 @@ namespace Abs\EmployeePkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
+use Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -138,6 +139,7 @@ class PunchOutMethod extends Model {
 			'id',
 			'name',
 		])
+				->where('company_id', Auth::user()->company_id)
 				->orderBy('name')
 				->get());
 		if ($add_default) {
