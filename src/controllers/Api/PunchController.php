@@ -6,6 +6,7 @@ use Abs\EmployeePkg\PunchOutMethod;
 use App\AttendanceLog;
 use App\Employee;
 use App\Http\Controllers\Controller;
+use App\OutletShift;
 use App\Shift;
 use App\User;
 use Auth;
@@ -45,8 +46,12 @@ class PunchController extends Controller {
 
 			DB::beginTransaction();
 
-			$punch = AttendanceLog::whereDate('date', date('Y-m-d'))
-				->where('user_id', $user->id)
+			// $punch = AttendanceLog::whereDate('date', date('Y-m-d'))
+			// 	->where('user_id', $user->id)
+			// 	->whereNull('out_time')
+			// 	->orderBy('id', 'DESC')
+			// 	->first();
+			$punch = AttendanceLog::where('user_id', $user->id)
 				->whereNull('out_time')
 				->orderBy('id', 'DESC')
 				->first();
@@ -95,17 +100,35 @@ class PunchController extends Controller {
 
 			$user['shift_start_time'] = '-';
 			$user['shift_end_time'] = '-';
-			$shift_timing = DB::table('outlet_shift')
-				->where('outlet_id', $user->employee->outlet_id)
-				->where('shift_id', $user->employee->shift_id)
-				->first();
+
+			// $shift_timing = DB::table('outlet_shift')
+			// 	->where('outlet_id', $user->employee->outlet_id)
+			// 	->where('shift_id', $user->employee->shift_id)
+			// 	->first();
+
+			if(date("l",strtotime(date('d-m-Y'))) == 'Sunday'){
+				$shift_type_id = 12282;
+			}elseif(date("l",strtotime(date('d-m-Y'))) == 'Saturday'){
+				$shift_type_id = 12281;
+			}else{
+				$shift_type_id = 12280;
+			}
+
+			$shift_timing = OutletShift::join('employee_shifts','employee_shifts.shift_id','outlet_shift.shift_id')->where('outlet_shift.outlet_id',$user->employee->outlet_id)->where('employee_shifts.date',date('Y-m-d'))->where('outlet_shift.shift_type_id',$shift_type_id)->where('employee_shifts.employee_id',$user->employee->id)->first(); 
+
 			if ($shift_timing) {
 				$user['shift_start_time'] = date('h:i A', strtotime($shift_timing->start_time));
 				$user['shift_end_time'] = date('h:i A', strtotime($shift_timing->end_time));
+				$shift_id = $shift_timing->shift_id;
+			}else{
+				$shift_id = '';
+				if($user->employee->shift_id){
+					$shift_id = $user->employee->shift_id;
+				}
 			}
 
-			if ($user->employee->shift_id) {
-				$user['shift'] = Shift::where('id', $user->employee->shift_id)->first();
+			if ($shift_id) {
+				$user['shift'] = Shift::where('id', $shift_id)->first();
 			}
 
 			$user->employee->outlet;
@@ -173,7 +196,8 @@ class PunchController extends Controller {
 				], $this->successStatus);
 			}
 
-			$punch = AttendanceLog::whereDate('date', date('Y-m-d'))->where('user_id', $user->id)->whereNull('out_time')->first();
+			// $punch = AttendanceLog::whereDate('date', date('Y-m-d'))->where('user_id', $user->id)->whereNull('out_time')->first();
+			$punch = AttendanceLog::where('user_id', $user->id)->whereNull('out_time')->orderBy('id', 'DESC')->first();
 			if (!$punch) {
 				return response()->json([
 					'success' => false,
@@ -199,17 +223,33 @@ class PunchController extends Controller {
 
 			$user['shift_start_time'] = '-';
 			$user['shift_end_time'] = '-';
-			$shift_timing = DB::table('outlet_shift')
-				->where('outlet_id', $user->employee->outlet_id)
-				->where('shift_id', $user->employee->shift_id)
-				->first();
+			// $shift_timing = DB::table('outlet_shift')
+			// 	->where('outlet_id', $user->employee->outlet_id)
+			// 	->where('shift_id', $user->employee->shift_id)
+			// 	->first();
+			if(date("l",strtotime(date('d-m-Y'))) == 'Sunday'){
+				$shift_type_id = 12282;
+			}elseif(date("l",strtotime(date('d-m-Y'))) == 'Saturday'){
+				$shift_type_id = 12281;
+			}else{
+				$shift_type_id = 12280;
+			}
+
+			$shift_timing = OutletShift::join('employee_shifts','employee_shifts.shift_id','outlet_shift.shift_id')->where('outlet_shift.outlet_id',$user->employee->outlet_id)->where('employee_shifts.date',date('Y-m-d'))->where('outlet_shift.shift_type_id',$shift_type_id)->where('employee_shifts.employee_id',$user->employee->id)->first(); 
+
 			if ($shift_timing) {
 				$user['shift_start_time'] = date('h:i A', strtotime($shift_timing->start_time));
 				$user['shift_end_time'] = date('h:i A', strtotime($shift_timing->end_time));
+				$shift_id = $shift_timing->shift_id;
+			}else{
+				$shift_id = '';
+				if($user->employee->shift_id){
+					$shift_id = $user->employee->shift_id;
+				}
 			}
 
-			if ($user->employee->shift_id) {
-				$user['shift'] = Shift::where('id', $user->employee->shift_id)->first();
+			if ($shift_id) {
+				$user['shift'] = Shift::where('id', $shift_id)->first();
 			}
 
 			$user->employee->outlet;
