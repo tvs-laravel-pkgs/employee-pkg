@@ -43,7 +43,7 @@ class PunchController extends Controller {
 					'message' => 'User not found',
 				], $this->successStatus);
 			}
-
+			
 			DB::beginTransaction();
 
 			// $punch = AttendanceLog::whereDate('date', date('Y-m-d'))
@@ -73,6 +73,38 @@ class PunchController extends Controller {
 					$data['punch_out_method_list'] = PunchOutMethod::getList();
 				}
 			} else {
+
+				if(date("l",strtotime(date('d-m-Y'))) == 'Sunday'){
+					$shift_type_id = 12282;
+				}elseif(date("l",strtotime(date('d-m-Y'))) == 'Saturday'){
+					$shift_type_id = 12281;
+				}else{
+					$shift_type_id = 12280;
+				}
+	
+				$shift_timing = OutletShift::join('employee_shifts','employee_shifts.shift_id','outlet_shift.shift_id')->where('outlet_shift.outlet_id',$user->employee->outlet_id)->where('employee_shifts.date',date('Y-m-d'))->where('outlet_shift.shift_type_id',$shift_type_id)->where('employee_shifts.employee_id',$user->employee->id)->first();
+	
+				if($shift_timing){
+					$shift_end_time = date('h:i:s A', strtotime($shift_timing->end_time));
+					$current_time = date('h:i:s A');
+	
+					$shift_end_time = strtotime($shift_end_time);
+					$current_time = strtotime($current_time);
+					
+					if ($current_time > $shift_end_time) {
+						return response()->json([
+							'success' => false,
+							'message' => "Employee's today shift details not matched in the current time",
+						], $this->successStatus);
+					} 
+				}
+				// else{
+				// 	return response()->json([
+				// 		'success' => false,
+				// 		'message' => 'Shift details not found',
+				// 	], $this->successStatus);
+				// }
+				
 				//PUNCH IN
 				$punch = new AttendanceLog();
 				$punch->user_id = $user->id;
