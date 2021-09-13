@@ -9,6 +9,10 @@ use App\Http\Controllers\Controller;
 use App\OutletShift;
 use App\Shift;
 use App\User;
+use App\JobCard;
+use App\MechanicTimeLog;
+use App\RepairOrderMechanic;
+use App\JobOrderRepairOrder;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -273,11 +277,15 @@ class PunchController extends Controller {
 				$user['shift_start_time'] = date('h:i A', strtotime($shift_timing->start_time));
 				$user['shift_end_time'] = date('h:i A', strtotime($shift_timing->end_time));
 				$shift_id = $shift_timing->shift_id;
+
+				$shift_end_time = date('Y-m-d H:i:s', strtotime($shift_timing->end_time));
 			}else{
 				$shift_id = '';
 				if($user->employee->shift_id){
 					$shift_id = $user->employee->shift_id;
 				}
+
+				$shift_end_time = Carbon::now();
 			}
 
 			if ($shift_id) {
@@ -301,6 +309,50 @@ class PunchController extends Controller {
 						'deputed_outlet_id' => NULL,
 						'updated_at' => Carbon::now(),
 					]);
+			}
+			//Update Employee's Worklog
+			$mechanic_log = MechanicTimeLog::join('repair_order_mechanics','repair_order_mechanics.id','mechanic_time_logs.repair_order_mechanic_id')
+			->where('repair_order_mechanics.mechanic_id', $user->id)
+			->orderBy('id','desc')
+			->select('mechanic_time_logs.*')
+			->first();
+
+			if($mechanic_log){
+				if(empty($mechanic_log->end_date_time)){
+					$mechanic_log->end_date_time = $shift_end_time;
+					$mechanic_log->status_id = 8263; //CLOSED
+					$mechanic_log->is_cron_update = 1;
+					$mechanic_log->save();
+
+					//Update Work Status
+					$repair_order_mechanic = RepairOrderMechanic::where('id', $mechanic_log->repair_order_mechanic_id)->where('mechanic_id', $user->id)->first();
+					$repair_order_mechanic->status_id = 8263;
+					$repair_order_mechanic->save();
+					
+					$job_order_repair_order = JobOrderRepairOrder::where('id',$repair_order_mechanic->job_order_repair_order_id)->first();
+
+					$repair_order_status = RepairOrderMechanic::where('job_order_repair_order_id', $job_order_repair_order->id)->where('status_id', '!=', 8263)->count();
+
+					if ($repair_order_status == 0) {
+						$job_order_repair_order->status_id = 8185;
+					} else {
+						$job_order_repair_order->status_id = 8183;
+					}
+					$job_order_repair_order->save();
+
+					$job_card = JobCard::where('job_order_id',$job_order_repair_order->job_order_id)->first();
+
+					if ($job_card) {
+						$mechanic_status = RepairOrderMechanic::join('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->where('job_order_repair_orders.job_order_id', $job_card->job_order_id)->where('repair_order_mechanics.status_id', '!=', 8263)->count();
+
+						//Update Jobcard Status // Review Pending
+						if ($mechanic_status == 0) {
+							$job_card->status_id = 8222;
+							$job_card->updated_at = Carbon::now();
+							$job_card->save();
+						}
+					}
+				}
 			}
 
 			DB::commit();
