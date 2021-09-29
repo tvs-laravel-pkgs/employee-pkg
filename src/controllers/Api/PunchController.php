@@ -89,9 +89,17 @@ class PunchController extends Controller {
 				$shift_timing = OutletShift::join('employee_shifts','employee_shifts.shift_id','outlet_shift.shift_id')->where('outlet_shift.outlet_id',$user->employee->outlet_id)->where('employee_shifts.date',date('Y-m-d'))->where('outlet_shift.shift_type_id',$shift_type_id)->where('employee_shifts.employee_id',$user->employee->id)->first();
 	
 				if($shift_timing){
-					$shift_end_time = date('h:i:s A', strtotime($shift_timing->end_time));
+					$date = date('d-m-Y');
 					$current_time = date('h:i:s A');
-	
+					$current_time = $date .' '. $current_time;
+
+					$shift_end_time = date('h:i:s A', strtotime($shift_timing->end_time));
+					if($shift_timing->is_night_shift == 1){
+						$date = date('d-m-Y', strtotime("+1 days"));
+					}
+
+					$shift_end_time = $date .' '. $shift_end_time;
+
 					$shift_end_time = strtotime($shift_end_time);
 					$current_time = strtotime($current_time);
 					
