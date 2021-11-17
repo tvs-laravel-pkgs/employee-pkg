@@ -63,8 +63,11 @@ class PunchController extends Controller {
 			if ($punch) {
 				//Already Punch In
 				//PUNCH OUT
-				$punch_in_time = (date('h:i:s A', strtotime('+1 minutes', strtotime($punch->in_time))));
-				$current_time = date('h:i:s A');
+				// $punch_in_time = (date('h:i:s A', strtotime('+1 minutes', strtotime($punch->in_time))));
+				// $current_time = date('h:i:s A');
+				$punch_in_time = date('d-m-Y', strtotime($punch->date)) . ' ' .$punch->in_time;
+				$punch_in_time = (date('d-m-Y h:i:s A', strtotime('+1 minutes', strtotime($punch_in_time))));
+				$current_time = date('d-m-Y h:i:s A');
 
 				$punch_in = strtotime($punch_in_time);
 				$current_in = strtotime($current_time);
