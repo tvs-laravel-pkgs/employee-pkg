@@ -126,6 +126,8 @@ class PunchController extends Controller {
 				$punch->date = $date = date('Y-m-d');
 				$punch->in_time = date('H:i:s');
 				$punch->punch_in_outlet_id = Auth::user()->working_outlet_id;
+				if($request->lunch_need == 1)
+					$punch->is_meal_need = 1;
 				$punch->created_by_id = Auth::id();
 				$punch->save();
 				$action = "In";
