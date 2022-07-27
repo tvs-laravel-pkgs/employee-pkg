@@ -4,5 +4,6 @@ Route::group(['namespace' => 'Abs\EmployeePkg\Api', 'middleware' => ['api', 'aut
 		
 		Route::post('punch', 'PunchController@punch');
 		Route::post('punch-out/save', 'PunchController@savePunchOut')->middleware('auth:api');
+		Route::post('mealUpdateToEmployee', 'PunchController@mealUpdateToEmployee');
 	});
 });

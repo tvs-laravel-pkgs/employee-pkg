@@ -119,15 +119,29 @@ class PunchController extends Controller {
 				// 		'message' => 'Shift details not found',
 				// 	], $this->successStatus);
 				// }
-				
+
+				if(isset($request->device_type) &&($request->device_type == mobile)){
+					if( $user->imei == null )
+						$imei_update = User::where('id', $user->id)->update(['imei' => $request->imei]);
+
+					$duplicate_punch = AttendanceLog::join('users' , 'users.id' ,'attendance_logs.user_id')
+										->where('users.imei', $user->imei)
+										->where('attendance_logs.date' ,date('Y-m-d'))
+										->where('attendance_logs.user_id', $user->id)->first();
+
+					if ($duplicate_punch) {
+						return response()->json([
+							'success' => false,
+							'message' => "Please Punch from Registered Mobie Number",
+						], $this->successStatus);
+					}
+				}
 				//PUNCH IN
 				$punch = new AttendanceLog();
 				$punch->user_id = $user->id;
 				$punch->date = $date = date('Y-m-d');
 				$punch->in_time = date('H:i:s');
 				$punch->punch_in_outlet_id = Auth::user()->working_outlet_id;
-				if($request->lunch_need == 1)
-					$punch->is_meal_need = 1;
 				$punch->created_by_id = Auth::id();
 				$punch->save();
 				$action = "In";
@@ -146,7 +160,6 @@ class PunchController extends Controller {
 			}
 
 			$data['action'] = $action;
-
 			$user['shift_start_time'] = '-';
 			$user['shift_end_time'] = '-';
 
@@ -382,5 +395,31 @@ class PunchController extends Controller {
 			], $this->successStatus);
 		}
 
+	}
+
+	public function mealUpdateToEmployee(Request $request) { 
+
+		try {
+			$meal_update = AttendanceLog::where('id',$request->punch_id)
+									->whereNotNull('punch_in_time')
+									->whereNull('punch_out_time')
+									->update([
+										'is_meal_need' => 1,
+										'updated_at' => Carbon::now(),
+									]);
+			if($meal_update) {
+				return response()->json([
+				'success' => true,
+				'message' => 'Meal Updated',
+			], $this->successStatus);
+			}
+
+	    } catch (Exception $e) { 
+
+			return response()->json([
+				'success' => false,
+				'message' => 'Meal Not Updated',
+			], $this->successStatus);
+		}
 	}
 }
