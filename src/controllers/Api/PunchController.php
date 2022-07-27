@@ -119,22 +119,64 @@ class PunchController extends Controller {
 				// 		'message' => 'Shift details not found',
 				// 	], $this->successStatus);
 				// }
-
-				if(isset($request->device_type) &&($request->device_type == mobile)){
-					if( $user->imei == null )
+				$punch_address = null;
+				if(isset($request->login_device) &&($request->login_device == "mobile")){
+					$punch_address = $request->location;
+					if( $user->imei == null ){
 						$imei_update = User::where('id', $user->id)->update(['imei' => $request->imei]);
-
+					}
 					$duplicate_punch = AttendanceLog::join('users' , 'users.id' ,'attendance_logs.user_id')
-										->where('users.imei', $user->imei)
-										->where('attendance_logs.date' ,date('Y-m-d'))
-										->where('attendance_logs.user_id', $user->id)->first();
+					                    ->where('users.imei', $request->imei)
+					                    ->where('attendance_logs.date' ,date('Y-m-d'))->first();
 
 					if ($duplicate_punch) {
 						return response()->json([
-							'success' => false,
-							'message' => "Please Punch from Registered Mobie Number",
+						'success' => false,
+						'message' => "Please Punch from Registered Mobie Number",
 						], $this->successStatus);
 					}
+					if($request->location){
+						if(!(str_contains($request->location , $user->employee->outlet->pincode))){
+							return response()->json([
+							'success' => false,
+							'message' => "Please Punch from your valid Outlet area",
+							], $this->successStatus);
+						}
+					}
+
+				} elseif ($request->latitude && $request->longitude) {
+					  $geocode = "https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$long&sensor=false&key=AIzaSyBikG2R--HjL7Xzjs_5KNFgHaae6Pq4Eyw";
+						$ch = curl_init();
+						curl_setopt($ch, CURLOPT_URL, $geocode);
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+						curl_setopt($ch, CURLOPT_PROXYPORT, 3128);
+						curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+						curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+						$response = curl_exec($ch);
+						curl_close($ch);
+						$output = json_decode($response);
+						$dataarray = get_object_vars($output);
+						if ($dataarray['status'] != 'ZERO_RESULTS' && $dataarray['status'] != 'INVALID_REQUEST') {
+						    $punch_address = (isset($dataarray['results'][0]->formatted_address)) ? $dataarray['results'][0]->formatted_address : null;
+						} else {
+						    $punch_address = null;
+						}
+						$duplicate_punch = AttendanceLog::join('users' , 'users.id' ,'attendance_logs.user_id')
+					                    ->where('users.ip_addr', $request->ip())
+					                    ->where('attendance_logs.date' ,date('Y-m-d'))->first();
+
+						if ($duplicate_punch) {
+							return response()->json([
+							'success' => false,
+							'message' => "Please Punch from Registered System",
+							], $this->successStatus);
+						}
+						if(!(str_contains($punch_address , $user->employee->outlet->pincode))){
+							return response()->json([
+							'success' => false,
+							'message' => "Please Punch from your valid Outlet area",
+							], $this->successStatus);
+						}
 				}
 				//PUNCH IN
 				$punch = new AttendanceLog();
@@ -143,6 +185,8 @@ class PunchController extends Controller {
 				$punch->in_time = date('H:i:s');
 				$punch->punch_in_outlet_id = Auth::user()->working_outlet_id;
 				$punch->created_by_id = Auth::id();
+				$punch->location = $punch_address;
+				$punch->ip_addr = $request->ip();
 				$punch->save();
 				$action = "In";
 
