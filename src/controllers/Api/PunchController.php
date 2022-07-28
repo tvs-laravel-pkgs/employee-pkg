@@ -445,8 +445,8 @@ class PunchController extends Controller {
 
 		try {
 			$meal_update = AttendanceLog::where('id',$request->punch_id)
-									->whereNotNull('punch_in_time')
-									->whereNull('punch_out_time')
+									->whereNotNull('in_time')
+									->whereNull('out_time')
 									->update([
 										'is_meal_need' => 1,
 										'updated_at' => Carbon::now(),
