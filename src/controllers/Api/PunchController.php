@@ -145,7 +145,7 @@ class PunchController extends Controller {
 					}
 
 				} elseif ($request->latitude && $request->longitude) {
-					  $geocode = "https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$long&sensor=false&key=AIzaSyBikG2R--HjL7Xzjs_5KNFgHaae6Pq4Eyw";
+					  $geocode = "https://maps.googleapis.com/maps/api/geocode/json?latlng=$request->latitude,$request->longitude&sensor=false&key=AIzaSyBikG2R--HjL7Xzjs_5KNFgHaae6Pq4Eyw";
 						$ch = curl_init();
 						curl_setopt($ch, CURLOPT_URL, $geocode);
 						curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -162,7 +162,7 @@ class PunchController extends Controller {
 						    $punch_address = null;
 						}
 						$duplicate_punch = AttendanceLog::join('users' , 'users.id' ,'attendance_logs.user_id')
-					                    ->where('users.ip_addr', $request->ip())
+					                    ->where('attendance_logs.ip_addr', $request->ip())
 					                    ->where('attendance_logs.date' ,date('Y-m-d'))->first();
 
 						if ($duplicate_punch) {
